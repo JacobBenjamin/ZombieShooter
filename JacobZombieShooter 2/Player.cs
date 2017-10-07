@@ -26,7 +26,7 @@ namespace JacobZombieShooter
 
 
         public Player(Texture2D image, Vector2 position, Color color, Vector2 Speed)
-            : base(image, position, color)
+            : base(image, position, color,0,0)
         {
             rotation = 0;
             speed = Speed;

@@ -34,6 +34,7 @@ namespace JacobZombieShooter
         List<Bullet> Bullets = new List<Bullet>();
         Color color;
         Vector2 speed;
+        int kills = 0;
         KeyboardState ks;
         KeyboardState prvsks;
         Texture2D battleGround;
@@ -41,8 +42,12 @@ namespace JacobZombieShooter
         Vector2 origin;
         Sprite background;
         bool shooting = false;
+        //bool shootingSlower = false;
         float rotation;
+        TimeSpan elapsedShootTime;
+        TimeSpan timeToShoot = TimeSpan.FromMilliseconds(150);
         public Game1()
+            //
         {
             graphics = new GraphicsDeviceManager(this);
 
@@ -83,8 +88,8 @@ namespace JacobZombieShooter
             BPostion = position;
             color = Color.White;
 
-            background = new Sprite(battleGround, new Vector2(0, 0), color);
-            background.sc
+            background = new Sprite(battleGround, new Vector2(0, 0), color,7f,6f);
+            //background.sc
 
             speed = new Vector2(5, 5);
             hero = new Player(flyguy, position, color, new Vector2(0, -5));
@@ -130,23 +135,31 @@ namespace JacobZombieShooter
                 Zombies.Add(new Zombie(new Vector2(700, 0), Zomb, color, speed));
                 pastGameTime = gameTime.TotalGameTime;
             }
-            if (ks.IsKeyDown(Keys.Space)/* && prvsks.IsKeyUp(Keys.Space)*/)
+            if (ks.IsKeyDown(Keys.Space) /*&& prvsks.IsKeyUp(Keys.Space)*/)
             {
                 shooting = true;
             }
-            if (ks.IsKeyDown(Keys.J) && ks.IsKeyDown(Keys.I) && ks.IsKeyDown(Keys.B))
+            else if(ks.IsKeyUp(Keys.Space))
             {
-                shooting = true;
+                shooting = false;
             }
+          
             //wwwwww
             if (shooting == true)
             {
-                Bullets.Add(new Bullet(BImage, hero.Position, color, hero.rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude));
-                shooting = false;
+                elapsedShootTime += gameTime.ElapsedGameTime;
+                if (elapsedShootTime > timeToShoot)
+                {
+                    elapsedShootTime = TimeSpan.Zero;
+                    Bullets.Add(new Bullet(BImage, hero.Position, color, hero.rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2));
+                }
+                
+
             }
 
             for (int i = 0; i < Zombies.Count; i++)
             {
+                bool breaking = false;
                 Zombies[i].update(hero);
                 if (hero.hitbox.Intersects(Zombies[i].hitbox))
                 {
@@ -160,13 +173,21 @@ namespace JacobZombieShooter
                     Exit();
                 }
                 for (int a = 0; a < Bullets.Count; a++)
+
                 {
                     if (Bullets[a].hitbox.Intersects(Zombies[i].hitbox))
                     {
+                        breaking = true;
                         Zombies.RemoveAt(i);
                         Bullets.RemoveAt(a);
+                        kills++;
                         break;
                     }
+                }
+             
+                if(breaking)
+                {
+                    break;
                 }
 
             }
@@ -193,7 +214,7 @@ namespace JacobZombieShooter
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Gold);
+            //GraphicsDevice.Clear(Color.Gold);
             spriteBatch.Begin();
             background.Draw(spriteBatch);
             hero.Draw(spriteBatch);
@@ -201,7 +222,7 @@ namespace JacobZombieShooter
             spriteBatch.Draw(lab, new Vector2(GraphicsDevice.Viewport.Width - lab.Width, 300), color);
             spriteBatch.Draw(lab, new Vector2(700, GraphicsDevice.Viewport.Height - lab.Height), color);
             spriteBatch.Draw(lab, new Vector2(700, 0), color);
-            //
+            
             for (int i = 0; i < Bullets.Count; i++)
             {
                 Bullets[i].Draw(spriteBatch);
@@ -210,6 +231,7 @@ namespace JacobZombieShooter
             {
                 Zombies[i].Draw(spriteBatch);
             }
+       
             spriteBatch.End();
             // TODO: Add your drawing code here
 

@@ -14,6 +14,7 @@ namespace JacobZombieShooter
         protected Texture2D Image;
         public Vector2 Position;
         public Color Color;
+        public Vector2 Scale;
         public virtual Rectangle hitbox
         {
             get
@@ -22,18 +23,18 @@ namespace JacobZombieShooter
             }
         }
 
-     public Sprite(Texture2D image,Vector2 position,Color color)
+     public Sprite(Texture2D image,Vector2 position,Color color,float XScale,float YScale)
         {
             Color = color;
             Image = image;
             Position = position;
-
+            Scale = new Vector2(XScale, YScale);
         }
         public virtual void Draw(SpriteBatch spritebatch)
         {
-            spritebatch.Draw(Image,Position,Color);
-            
+            spritebatch.Draw(Image, Position, null, Color, 0, new Vector2(0, 0), Scale, SpriteEffects.None, 0);
         }
+        
         
     }
 }

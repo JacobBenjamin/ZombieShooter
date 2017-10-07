@@ -14,11 +14,11 @@ namespace JacobZombieShooter
         Vector2 origin;
         Vector2 speed;
         float rotation;
-        public Bullet(Texture2D image, Vector2 position, Color color, float rotation, float magnitude)
-             : base(image, position, color)
+        public Bullet(Texture2D image, Vector2 position, Color color, float rotation, float magnitude, float speedScale)
+             : base(image, position, color,1.5f,1.5f)
         {
             origin = new Vector2(image.Width / 2f, image.Height / 2f);
-            speed = ZombieShooterHelper.CalculateNewSpeed(magnitude, rotation);
+            speed = speedScale * ZombieShooterHelper.CalculateNewSpeed(magnitude, rotation);
             this.rotation = rotation;
         }
          public void update (KeyboardState ks)
