@@ -10,9 +10,10 @@ namespace JacobZombieShooter
 {
     public class Sprite
     {
+        //add scale to this class
         protected Texture2D Image;
         public Vector2 Position;
-        protected Color Color;
+        public Color Color;
         public virtual Rectangle hitbox
         {
             get
@@ -33,5 +34,6 @@ namespace JacobZombieShooter
             spritebatch.Draw(Image,Position,Color);
             
         }
+        
     }
 }

@@ -36,14 +36,17 @@ namespace JacobZombieShooter
         Vector2 speed;
         KeyboardState ks;
         KeyboardState prvsks;
+        Texture2D battleGround;
+        int lives = 5;
         Vector2 origin;
+        Sprite background;
         bool shooting = false;
         float rotation;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth=2000;
+            graphics.PreferredBackBufferWidth = 2000;
             graphics.PreferredBackBufferHeight = 1000;
             Content.RootDirectory = "Content";
         }
@@ -72,12 +75,17 @@ namespace JacobZombieShooter
             position = new Vector2(100, 100);
             flyguy = Content.Load<Texture2D>("FlyGuy");
             Position = new Vector2(0, 300);
-             PositionB = new Vector2(0, 300);
+            PositionB = new Vector2(0, 300);
             lab = Content.Load<Texture2D>("place");
             Zomb = Content.Load<Texture2D>("Benson");
-             BImage = Content.Load<Texture2D>("nugget"); 
-             BPostion  = position;
-           color = Color.White;
+            BImage = Content.Load<Texture2D>("nugget");
+            battleGround = Content.Load<Texture2D>("beez");
+            BPostion = position;
+            color = Color.White;
+
+            background = new Sprite(battleGround, new Vector2(0, 0), color);
+            background.sc
+
             speed = new Vector2(5, 5);
             hero = new Player(flyguy, position, color, new Vector2(0, -5));
             Zombie zombie = new Zombie(Position, Zomb, color, speed);
@@ -118,18 +126,19 @@ namespace JacobZombieShooter
 
                 Zombies.Add(new Zombie(new Vector2(0, 300), Zomb, color, speed));
                 Zombies.Add(new Zombie(new Vector2(GraphicsDevice.Viewport.Width - Zomb.Width, 300), Zomb, color, speed));
-
+                Zombies.Add(new Zombie(new Vector2(700, GraphicsDevice.Viewport.Height - Zomb.Height), Zomb, color, speed));
+                Zombies.Add(new Zombie(new Vector2(700, 0), Zomb, color, speed));
                 pastGameTime = gameTime.TotalGameTime;
             }
-            if (ks.IsKeyDown(Keys.Space) && prvsks.IsKeyUp(Keys.Space))
+            if (ks.IsKeyDown(Keys.Space)/* && prvsks.IsKeyUp(Keys.Space)*/)
             {
                 shooting = true;
             }
-            if (ks.IsKeyDown(Keys.J)&& ks.IsKeyDown(Keys.I) && ks.IsKeyDown(Keys.B))
+            if (ks.IsKeyDown(Keys.J) && ks.IsKeyDown(Keys.I) && ks.IsKeyDown(Keys.B))
             {
                 shooting = true;
             }
-            //
+            //wwwwww
             if (shooting == true)
             {
                 Bullets.Add(new Bullet(BImage, hero.Position, color, hero.rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude));
@@ -141,9 +150,15 @@ namespace JacobZombieShooter
                 Zombies[i].update(hero);
                 if (hero.hitbox.Intersects(Zombies[i].hitbox))
                 {
+                    Zombies.RemoveAt(i);
+                    lives--;
+                    hero.Color.R -= 50;
+                    hero.Color.B -= 50;
+                }
+                if (lives <= 0)
+                {
                     Exit();
                 }
-                //
                 for (int a = 0; a < Bullets.Count; a++)
                 {
                     if (Bullets[a].hitbox.Intersects(Zombies[i].hitbox))
@@ -155,8 +170,8 @@ namespace JacobZombieShooter
                 }
 
             }
-          //  List<Bullet> itemsToDelete;
-            for(int i = 0; i < Bullets.Count; i++)
+            //  List<Bullet> itemsToDelete;
+            for (int i = 0; i < Bullets.Count; i++)
             {
                 Bullets[i].update(ks);
                 if (Bullets[i].Position.Y < 0 || Bullets[i].Position.Y > GraphicsDevice.Viewport.Height || Bullets[i].Position.X < 0 || Bullets[i].Position.X > GraphicsDevice.Viewport.Width)
@@ -180,10 +195,13 @@ namespace JacobZombieShooter
         {
             GraphicsDevice.Clear(Color.Gold);
             spriteBatch.Begin();
-            
+            background.Draw(spriteBatch);
             hero.Draw(spriteBatch);
-            spriteBatch.Draw(lab, PositionB,color);
+            spriteBatch.Draw(lab, PositionB, color);
             spriteBatch.Draw(lab, new Vector2(GraphicsDevice.Viewport.Width - lab.Width, 300), color);
+            spriteBatch.Draw(lab, new Vector2(700, GraphicsDevice.Viewport.Height - lab.Height), color);
+            spriteBatch.Draw(lab, new Vector2(700, 0), color);
+            //
             for (int i = 0; i < Bullets.Count; i++)
             {
                 Bullets[i].Draw(spriteBatch);
