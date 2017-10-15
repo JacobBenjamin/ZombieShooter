@@ -10,7 +10,7 @@ namespace JacobZombieShooter
 {
     class Zombie : Sprite
     {
-        Vector2 Speed;
+        public Vector2 Speed;
         Player Enemy;
         public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed): base(image,postions, color,1f,1f)
         {
@@ -25,19 +25,19 @@ namespace JacobZombieShooter
         {
             if(Position.X > player.Position.X)
             {
-                Position.X -= .3f;
+                Position.X -= Speed.X;
             }
             else if (Position.X < player.Position.X)
             {
-                Position.X += .3f;
+                Position.X += Speed.X;
             }
             if (Position.Y > player.Position.Y)
             {
-                Position.Y -= .3f;
+                Position.Y -= Speed.Y;
             }
             else if (Position.Y < player.Position.Y)
             {
-                Position.Y += .3f;
+                Position.Y += Speed.Y;
             }
         }
     }

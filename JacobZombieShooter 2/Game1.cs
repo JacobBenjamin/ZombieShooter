@@ -19,6 +19,7 @@ namespace JacobZombieShooter
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
+        SpriteFont font;
         SpriteBatch spriteBatch;
         Vector2 position;
         Texture2D flyguy;
@@ -27,6 +28,8 @@ namespace JacobZombieShooter
         TimeSpan pastGameTime;
         Vector2 BPostion;
         Vector2 PositionB;
+        float spookSpeed = .3f;
+        int level = 1;
         Vector2 Position;
         Texture2D Zomb;
         Player hero;
@@ -46,8 +49,9 @@ namespace JacobZombieShooter
         float rotation;
         TimeSpan elapsedShootTime;
         TimeSpan timeToShoot = TimeSpan.FromMilliseconds(150);
+        bool spookIncrease;
         public Game1()
-            //
+        //
         {
             graphics = new GraphicsDeviceManager(this);
 
@@ -87,19 +91,24 @@ namespace JacobZombieShooter
             battleGround = Content.Load<Texture2D>("beez");
             BPostion = position;
             color = Color.White;
+            spookIncrease = false;
 
-            background = new Sprite(battleGround, new Vector2(0, 0), color,7f,6f);
+            font = Content.Load<SpriteFont>("font");
+
+
+            background = new Sprite(battleGround, new Vector2(0, 0), color, 7f, 6f);
             //background.sc
-
-            speed = new Vector2(5, 5);
-            hero = new Player(flyguy, position, color, new Vector2(0, -5));
+            
+            speed = new Vector2(spookSpeed,spookSpeed);
+            hero = new Player(flyguy, position, color, new Vector2(1, -5));
             Zombie zombie = new Zombie(Position, Zomb, color, speed);
             for (int i = 0; i < 3; i++)
             {
+           
                 Position.X += Zomb.Width + 5;
                 Zombies.Add(new Zombie(Position, Zomb, color, speed));
             }
-
+            
             // TODO: use this.Content to load your game content here
         }
 
@@ -122,7 +131,7 @@ namespace JacobZombieShooter
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             ks = Keyboard.GetState();
-
+           
             hero.Update(ks);
             //dddd
             if (gameTime.TotalGameTime - pastGameTime > TimeSpan.FromSeconds(1))
@@ -139,11 +148,11 @@ namespace JacobZombieShooter
             {
                 shooting = true;
             }
-            else if(ks.IsKeyUp(Keys.Space))
+            else if (ks.IsKeyUp(Keys.Space))
             {
                 shooting = false;
             }
-          
+
             //wwwwww
             if (shooting == true)
             {
@@ -153,12 +162,13 @@ namespace JacobZombieShooter
                     elapsedShootTime = TimeSpan.Zero;
                     Bullets.Add(new Bullet(BImage, hero.Position, color, hero.rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2));
                 }
-                
+
 
             }
-
+          
             for (int i = 0; i < Zombies.Count; i++)
             {
+                Zombies[i].Speed = speed = new Vector2(spookSpeed,spookSpeed);
                 bool breaking = false;
                 Zombies[i].update(hero);
                 if (hero.hitbox.Intersects(Zombies[i].hitbox))
@@ -167,11 +177,13 @@ namespace JacobZombieShooter
                     lives--;
                     hero.Color.R -= 50;
                     hero.Color.B -= 50;
+                    if (lives <= 0)
+                    {
+                        Exit();
+                    }
+                    continue;
                 }
-                if (lives <= 0)
-                {
-                    Exit();
-                }
+                
                 for (int a = 0; a < Bullets.Count; a++)
 
                 {
@@ -181,15 +193,25 @@ namespace JacobZombieShooter
                         Zombies.RemoveAt(i);
                         Bullets.RemoveAt(a);
                         kills++;
+                        spookIncrease = false;
                         break;
+                    
                     }
                 }
-             
-                if(breaking)
+
+                if (breaking)
                 {
                     break;
                 }
 
+                if (kills != 0 && kills % 50 == 0 && !spookIncrease)
+                {
+                    spookIncrease = true;
+
+                    spookSpeed += .1f;
+
+                    level++;
+                }
             }
             //  List<Bullet> itemsToDelete;
             for (int i = 0; i < Bullets.Count; i++)
@@ -218,11 +240,12 @@ namespace JacobZombieShooter
             spriteBatch.Begin();
             background.Draw(spriteBatch);
             hero.Draw(spriteBatch);
+            spriteBatch.DrawString(font, kills.ToString(), Vector2.Zero, Color.White);
             spriteBatch.Draw(lab, PositionB, color);
             spriteBatch.Draw(lab, new Vector2(GraphicsDevice.Viewport.Width - lab.Width, 300), color);
             spriteBatch.Draw(lab, new Vector2(700, GraphicsDevice.Viewport.Height - lab.Height), color);
             spriteBatch.Draw(lab, new Vector2(700, 0), color);
-            
+
             for (int i = 0; i < Bullets.Count; i++)
             {
                 Bullets[i].Draw(spriteBatch);
@@ -231,7 +254,7 @@ namespace JacobZombieShooter
             {
                 Zombies[i].Draw(spriteBatch);
             }
-       
+
             spriteBatch.End();
             // TODO: Add your drawing code here
 
