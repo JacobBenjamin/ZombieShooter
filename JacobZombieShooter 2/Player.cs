@@ -14,8 +14,9 @@ namespace JacobZombieShooter
         Vector2 origin;
        public float rotation;
        public Vector2 speed;
-        
-      public  float originalSpeedMagnitude;
+        public bool gameOver = false;
+
+        public float originalSpeedMagnitude;
         public override Rectangle hitbox
         {
             get
@@ -42,26 +43,28 @@ namespace JacobZombieShooter
 
         public void Update(KeyboardState ks)
         {
-            if (ks.IsKeyDown(Keys.W))
+            if (gameOver == false)
             {
-                Position += speed;
+                if (ks.IsKeyDown(Keys.W))
+                {
+                    Position += speed;
+                }
+                if (ks.IsKeyDown(Keys.S))
+                {
+                    Position -= speed;
+                }
+                if (ks.IsKeyDown(Keys.D))
+                {
+                    rotation += .05f;
+                    speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
+                }
+                if (ks.IsKeyDown(Keys.A))
+                {
+                    rotation -= .05f;
+                    //hero.Position.X -= 5;
+                    speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
+                }
             }
-            if (ks.IsKeyDown(Keys.S))
-            {
-                Position -= speed;
-            }
-            if (ks.IsKeyDown(Keys.D))
-            {
-                rotation += .05f;
-                speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
-            }
-            if (ks.IsKeyDown(Keys.A))
-            {
-                rotation -=.05f;
-                //hero.Position.X -= 5;
-                speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
-            }
-
             Console.WriteLine("speed: {0}", speed.ToString());
             Console.WriteLine("Position: {0}", Position.ToString());
         }
