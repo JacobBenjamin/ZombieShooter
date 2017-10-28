@@ -52,12 +52,12 @@ namespace JacobZombieShooter
             }
             if (ks.IsKeyDown(Keys.D))
             {
-                rotation += .1f;
+                rotation += .05f;
                 speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
             }
             if (ks.IsKeyDown(Keys.A))
             {
-                rotation -=.1f;
+                rotation -=.05f;
                 //hero.Position.X -= 5;
                 speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
             }

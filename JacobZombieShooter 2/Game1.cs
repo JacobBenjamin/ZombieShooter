@@ -23,11 +23,18 @@ namespace JacobZombieShooter
         SpriteBatch spriteBatch;
         Vector2 position;
         Texture2D flyguy;
+        bool ammopalce = true;
+        int ammo = 50;
         Texture2D lab;
         Texture2D BImage;
+        bool reload = false;
+        AmmoCase ammoCase;
+        Texture2D ammoImage;
+        Vector2 ammoPosition;
         TimeSpan pastGameTime;
         Vector2 BPostion;
         Vector2 PositionB;
+        Random randy;
         float spookSpeed = .3f;
         int level = 1;
         Vector2 Position;
@@ -85,13 +92,17 @@ namespace JacobZombieShooter
             flyguy = Content.Load<Texture2D>("FlyGuy");
             Position = new Vector2(0, 300);
             PositionB = new Vector2(0, 300);
-            lab = Content.Load<Texture2D>("place");
+            ammoPosition = new Vector2(500, 500);
+               lab = Content.Load<Texture2D>("place");
             Zomb = Content.Load<Texture2D>("Benson");
+            
             BImage = Content.Load<Texture2D>("nugget");
             battleGround = Content.Load<Texture2D>("beez");
+            ammoImage = Content.Load<Texture2D>("nuggetBox");
             BPostion = position;
             color = Color.White;
             spookIncrease = false;
+            randy = new Random();
 
             font = Content.Load<SpriteFont>("font");
 
@@ -101,6 +112,7 @@ namespace JacobZombieShooter
             
             speed = new Vector2(spookSpeed,spookSpeed);
             hero = new Player(flyguy, position, color, new Vector2(1, -5));
+            ammoCase = new AmmoCase(ammoImage, new Vector2(randy.Next(100, 1900), randy.Next(100,900)), color);
             Zombie zombie = new Zombie(Position, Zomb, color, speed);
             for (int i = 0; i < 3; i++)
             {
@@ -154,13 +166,14 @@ namespace JacobZombieShooter
             }
 
             //wwwwww
-            if (shooting == true)
+            if (shooting == true && ammo > 0)
             {
                 elapsedShootTime += gameTime.ElapsedGameTime;
                 if (elapsedShootTime > timeToShoot)
                 {
                     elapsedShootTime = TimeSpan.Zero;
                     Bullets.Add(new Bullet(BImage, hero.Position, color, hero.rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2));
+                    ammo--;
                 }
 
 
@@ -198,12 +211,21 @@ namespace JacobZombieShooter
                     
                     }
                 }
-
+                
                 if (breaking)
                 {
                     break;
                 }
-
+                if (hero.hitbox.Intersects(ammoCase.hitbox))
+                {
+                    reload = true;
+                    ammoCase.Position = new Vector2(randy.Next(100, 1900), randy.Next(100, 900));
+                }
+                if(reload == true)
+                {
+                    ammo += 50;
+                    reload = false;
+                }
                 if (kills != 0 && kills % 50 == 0 && !spookIncrease)
                 {
                     spookIncrease = true;
@@ -241,10 +263,12 @@ namespace JacobZombieShooter
             background.Draw(spriteBatch);
             hero.Draw(spriteBatch);
             spriteBatch.DrawString(font, kills.ToString(), Vector2.Zero, Color.White);
+            spriteBatch.DrawString(font, ammo.ToString(), new Vector2(1900,0), color);
             spriteBatch.Draw(lab, PositionB, color);
             spriteBatch.Draw(lab, new Vector2(GraphicsDevice.Viewport.Width - lab.Width, 300), color);
             spriteBatch.Draw(lab, new Vector2(700, GraphicsDevice.Viewport.Height - lab.Height), color);
             spriteBatch.Draw(lab, new Vector2(700, 0), color);
+            ammoCase.Draw(spriteBatch);
 
             for (int i = 0; i < Bullets.Count; i++)
             {
