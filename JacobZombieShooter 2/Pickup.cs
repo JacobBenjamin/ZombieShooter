@@ -8,12 +8,10 @@ using System.Threading.Tasks;
 
 namespace JacobZombieShooter
 {
-    class AmmoCase : Pickup
+    class Pickup : Sprite
     {
-        public AmmoCase(Texture2D image, Vector2 position, Color color) : base(image, position, color)
+        public Pickup(Texture2D image, Vector2 position, Color color) : base(image, position, color, .5f, .5f)
         {
         }
-    
     }
-    
 }
