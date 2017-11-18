@@ -41,7 +41,7 @@ namespace JacobZombieShooter
         Vector2 BPostion;
         Vector2 PositionB;
         Vector2 healthPosition;
-
+        Tank tank;
         Random randy;
         float spookSpeed = .3f;
         int level = 1;
@@ -54,7 +54,9 @@ namespace JacobZombieShooter
         Color color;
         Vector2 speed;
         float shootSpeed = 150f;
+        Texture2D whatDoesATankLookLikeAgain;
         KeyboardState ks;
+        GamePadState gs;
         KeyboardState prvsks;
         Texture2D healthimage;
         Texture2D battleGround;
@@ -108,6 +110,7 @@ namespace JacobZombieShooter
             lab = Content.Load<Texture2D>("place");
             Zomb = Content.Load<Texture2D>("Benson");
             ded = kills.ToString();
+            whatDoesATankLookLikeAgain = Content.Load<Texture2D>("tank");
             BImage = Content.Load<Texture2D>("nugget");
             battleGround = Content.Load<Texture2D>("beez");
             ammoImage = Content.Load<Texture2D>("nuggetBox");
@@ -125,7 +128,7 @@ namespace JacobZombieShooter
             //background.sc
             healthCrate = new HealthCrate(healthimage, healthPosition, color);
             speed = new Vector2(spookSpeed, spookSpeed);
-
+            tank = new Tank(whatDoesATankLookLikeAgain, position, color);
             hero = new Player(flyguy, position, color, new Vector2(1, -5));
             ammoCase = new AmmoCase(ammoImage, new Vector2(randy.Next(100, 1900), randy.Next(100, 900)), color);
             Zombie zombie = new Zombie(Position, Zomb, color, speed);
@@ -164,8 +167,9 @@ namespace JacobZombieShooter
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             ks = Keyboard.GetState();
+            gs = GamePad.GetState(0);
             timeToShoot = TimeSpan.FromMilliseconds(shootSpeed);
-            hero.Update(ks);
+            hero.Update(ks,gs);
             //dddd
             if (gameTime.TotalGameTime - pastGameTime > TimeSpan.FromSeconds(1) && hero.gameOver == false)
             {
@@ -181,11 +185,11 @@ namespace JacobZombieShooter
                 //Zombies.Add(new Zombie(new Vector2(700, 0), Zomb, color, speed));
                 pastGameTime = gameTime.TotalGameTime;
             }
-            if (ks.IsKeyDown(Keys.Space) /*&& prvsks.IsKeyUp(Keys.Space)*/)
+            if (ks.IsKeyDown(Keys.Space) || gs.Triggers.Right > 0.95f /*&& prvsks.IsKeyUp(Keys.Space)*/)
             {
                 shooting = true;
             }
-            else if (ks.IsKeyUp(Keys.Space))
+            else if (ks.IsKeyUp(Keys.Space)|| gs.Triggers.Right < 0.95f)
             {
                 shooting = false;
             }
@@ -197,7 +201,7 @@ namespace JacobZombieShooter
                 if (elapsedShootTime > timeToShoot)
                 {
                     elapsedShootTime = TimeSpan.Zero;
-                    Bullets.Add(new Bullet(BImage, hero.Position, color, hero.rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2));
+                    Bullets.Add(new Bullet(BImage, hero.Position, color, hero.rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2,2));
                     ammo--;
                 }
 
@@ -217,7 +221,7 @@ namespace JacobZombieShooter
                     hero.Color.B -= 50;
                     if (lives <= 0)
                     {
-                        ded = "yuo deid ;( perss entre to restrat";
+                        ded = "yuo deid ;( perss entre ro X to restrat";
                         hero.gameOver = true;
                     }
                     break;
@@ -265,7 +269,7 @@ namespace JacobZombieShooter
                 }
                 else if (hero.gameOver)
                 {
-                    if (ks.IsKeyDown(Keys.Enter))
+                    if (ks.IsKeyDown(Keys.Enter)|| gs.IsButtonDown(Buttons.X))
                     {
                         kills = 0;
                         lives = 5;
@@ -287,7 +291,7 @@ namespace JacobZombieShooter
                 }
                 if(Labs.Count <= 0)
                 {
-                    ded = "noice jbo boi, perss neter to restrat";
+                    ded = "noice jbo boi, perss neter ro X to restrat";
                     hero.gameOver = true;
                 }
 
