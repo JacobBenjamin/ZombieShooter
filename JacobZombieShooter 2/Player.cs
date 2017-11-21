@@ -45,31 +45,32 @@ namespace JacobZombieShooter
         {
             if (gameOver == false)
             {
-                /*if (ks.IsKeyDown(Keys.W)|| gs.ThumbSticks.Left.Y > 0.1f)
+                if (ks.IsKeyDown(Keys.W))
                 {
                     Position += speed;
                 }
-                if (ks.IsKeyDown(Keys.S) || (gs.ThumbSticks.Left.Y < -0.1f))
+                if (ks.IsKeyDown(Keys.S))
                 {
                     Position -= speed;
-                }*/
+                }
                 Position.Y -= gs.ThumbSticks.Left.Y * 3;
                 Position.X += gs.ThumbSticks.Left.X * 3;
                 if(Math.Abs(gs.ThumbSticks.Left.X) >= 0.1 || Math.Abs(gs.ThumbSticks.Left.Y) >= 0.1)
                 {
                     rotation = (float)Math.Atan2(gs.ThumbSticks.Left.X, gs.ThumbSticks.Left.Y);
                 }
-                /*if (ks.IsKeyDown(Keys.D) || gs.ThumbSticks.Left.X > 0.1f)
+                if (ks.IsKeyDown(Keys.D))
                 {
                     rotation += .05f;
                     speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
                 }
-                if (ks.IsKeyDown(Keys.A) || gs.ThumbSticks.Left.X < -0.1f)
+                if (ks.IsKeyDown(Keys.A))
                 {
                     rotation -= .05f;
                     //hero.Position.X -= 5;
                     speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
-                }*/
+                }
+                
             }
             Console.WriteLine("speed: {0}", speed.ToString());
             Console.WriteLine("Position: {0}", Position.ToString());
