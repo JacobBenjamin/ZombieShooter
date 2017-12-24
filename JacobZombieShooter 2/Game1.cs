@@ -45,7 +45,7 @@ namespace JacobZombieShooter
         Vector2 PositionB;
         Vector2 healthPosition;
         Tank tank;
-        bool poweredUp;
+        bool poweredUp = false;
         Random randy;
         float spookSpeed = .3f;
         int level = 1;
@@ -53,6 +53,7 @@ namespace JacobZombieShooter
         Texture2D Zomb;
         Player hero;
         List<Zombie> Zombies = new List<Zombie>();
+        TimeSpan lastTank;
         List<Bullet> Bullets = new List<Bullet>();
         List<Lab> Labs = new List<Lab>();
         Color color;
@@ -73,6 +74,7 @@ namespace JacobZombieShooter
         TimeSpan elapsedShootTime;
         TimeSpan timeToShoot;
         bool spookIncrease;
+        Texture2D tankImage;
 
         public Game1()
         //
@@ -134,7 +136,7 @@ namespace JacobZombieShooter
             //background.sc
             healthCrate = new HealthCrate(healthimage, healthPosition, color);
             speed = new Vector2(spookSpeed, spookSpeed);
-            tank = new Tank(whatDoesATankLookLikeAgain, position, color);
+            tank = new Tank(whatDoesATankLookLikeAgain, new Vector2(50,500), color);
 
             hero = new Player(flyguy, position, color,HeroPosition);
             ammoCase = new AmmoCase(ammoImage, new Vector2(randy.Next(100, 1900), randy.Next(100, 900)), color);
@@ -236,7 +238,26 @@ namespace JacobZombieShooter
                     }
                     break;
                 }
+                if(hero.Position.X < 0)
+                {
+                    hero.Position.X = GraphicsDevice.Viewport.Width;
+                    
+                }
+                else if (hero.Position.X > GraphicsDevice.Viewport.Width)
+                {
+                    hero.Position.X = 0;
 
+                }
+               else if (hero.Position.Y < 0)
+                {
+                    hero.Position.Y = GraphicsDevice.Viewport.Height;
+
+                }
+               else if (hero.Position.Y > GraphicsDevice.Viewport.Height)
+                {
+                    hero.Position.Y = 0;
+
+                }
                 for (int a = 0; a < Bullets.Count; a++)
 
                 {
@@ -244,26 +265,25 @@ namespace JacobZombieShooter
                     {
 
                         breaking = true;
-                       
+
                         Zombies.RemoveAt(i);
                         if (poweredUp == true/*&& gameTime.TotalGameTime - pastGameTime > TimeSpan.FromSeconds(10) && hero.gameOver == false*/)
                         {
-                            
-                            flyguy = Content.Load<Texture2D>("tank");
-                            hero = new Player(flyguy, position, color,new Vector2(1,5));
 
-                           // poweredUp = false;
+
+
+                            // poweredUp = false;
 
 
                         }
-                        else if(poweredUp==false)
+                        else if (poweredUp == false)
                         {
                             Bullets.RemoveAt(a);
                         }
                         kills++;
                         ded = kills.ToString();
                         spookIncrease = false;
-                      
+
                         break;
 
                     }
@@ -294,9 +314,9 @@ namespace JacobZombieShooter
                 }
                 else if (hero.gameOver)
                 {
-                    if (ks.IsKeyDown(Keys.Enter)|| gs.IsButtonDown(Buttons.X))
+                    if (ks.IsKeyDown(Keys.Enter) || gs.IsButtonDown(Buttons.X))
                     {
-                        
+
                         kills = 0;
                         lives = 5;
                         ammo = 50;
@@ -308,8 +328,8 @@ namespace JacobZombieShooter
                         spookSpeed = .3f;
                         shootSpeed = 150f;
                         hero.gameOver = false;
-                       // poweredUp up = false;
-                        HeroPosition.X  = 1;
+                        poweredUp = false;
+                        HeroPosition.X = 1;
                         HeroPosition.Y = 5;
                         Labs.Clear();
                         Labs.Add(new Lab(lab, new Vector2(GraphicsDevice.Viewport.Width - lab.Width, 300), color));
@@ -320,10 +340,10 @@ namespace JacobZombieShooter
                         //{
                         //    Labs[i].lives = prvsLabLife;
                         //}
-                        
+
                     }
                 }
-                if(Labs.Count <= 0)
+                if (Labs.Count <= 0)
                 {
                     ded = "noice jbo boi, perss neter ro X to restrat";
                     hero.gameOver = true;
@@ -344,7 +364,7 @@ namespace JacobZombieShooter
                     healing = true;
                     healthCrate.Position = new Vector2(randy.Next(100, 1900), randy.Next(100, 900));
                 }
-                if (healing == true&& lives<5)
+                if (healing == true && lives < 5)
                 {
                     lives += 1;
                     hero.Color.R += 50;
@@ -357,7 +377,26 @@ namespace JacobZombieShooter
                     poweredUp = true;
                     tank.Position = new Vector2(randy.Next(100, 1900), randy.Next(100, 900));
                 }
-               
+                
+                 if (lastTank > TimeSpan.FromSeconds(100) && hero.gameOver == false)
+                {
+                    lastTank = TimeSpan.Zero;
+                   
+
+                    poweredUp = false;
+                   
+                }
+
+                if (poweredUp == true)
+                {
+                    hero.Image = whatDoesATankLookLikeAgain;
+                    lastTank += gameTime.ElapsedGameTime;
+                }
+                else
+                {
+                    hero.Image = flyguy;
+                }
+                
                 if (hero.Color.B >= 250)
                 {
                     hero.Color.B = 250;

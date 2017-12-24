@@ -11,7 +11,7 @@ namespace JacobZombieShooter
     public class Sprite
     {
         //add scale to this class
-        protected Texture2D Image;
+        public Texture2D Image;
         public Vector2 Position;
         public Color Color;
         public Vector2 Scale;
