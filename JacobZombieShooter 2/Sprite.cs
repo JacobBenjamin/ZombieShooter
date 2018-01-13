@@ -34,6 +34,11 @@ namespace JacobZombieShooter
         {
             spritebatch.Draw(Image, Position, null, Color, 0, new Vector2(0, 0), Scale, SpriteEffects.None, 0);
         }
+
+        public virtual void DrawHitBox(SpriteBatch spritebatch)
+        {
+            spritebatch.Draw(Image, hitbox, Color.Red);
+        }
         
         
     }

@@ -45,6 +45,8 @@ namespace JacobZombieShooter
         {
             if (gameOver == false)
             {
+                //very quick fix to tank rotation
+                origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
                 if (ks.IsKeyDown(Keys.W))
                 {
                     Position += speed;
