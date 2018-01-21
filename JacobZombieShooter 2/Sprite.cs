@@ -19,7 +19,7 @@ namespace JacobZombieShooter
         {
             get
             {
-                return new Rectangle((int)Position.X, (int)Position.Y, Image.Width, Image.Height);
+                return new Rectangle((int)Position.X, (int)Position.Y, (int)(Image.Width * Scale.X), (int)(Image.Height*Scale.Y));
             }
         }
 
