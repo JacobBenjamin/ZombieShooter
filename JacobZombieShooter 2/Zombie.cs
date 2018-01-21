@@ -21,7 +21,7 @@ namespace JacobZombieShooter
         {
             base.Draw(spritebatch);
         }
-        public void update(Player player)
+        public void update(Player player, List<Bullet> bullets)
         {
             if(Position.X > player.Position.X)
             {
@@ -39,6 +39,7 @@ namespace JacobZombieShooter
             {
                 Position.Y += Speed.Y;
             }
+            bullets.Add(new Bullet(Position,Color,0,0,0,0));
         }
     }
 }
