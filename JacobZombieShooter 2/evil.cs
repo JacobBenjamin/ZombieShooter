@@ -16,6 +16,8 @@ namespace JacobZombieShooter
             float xComponent = magnitude * (float)Math.Cos(rotation);
             float yComponent = magnitude * (float)Math.Sin(rotation);
             speed = speedScale * new Vector2(xComponent, yComponent);
+           
+
         }
        
     }

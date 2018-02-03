@@ -12,14 +12,22 @@ namespace JacobZombieShooter
     {
         public Vector2 Speed;
         Player Enemy;
-
+       public List<evil> BadBullets;
+        public override Rectangle hitbox
+        {
+            get
+            {
+                return new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), Image.Width, Image.Height);
+            }
+        }
         public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed) : base(image, postions, color, 1f, 1f)
         {
             Speed = speed;
-
+            BadBullets = new List<evil> ();
+            Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
         }
 
-        public void update(Player player, List<evil> bullets)
+        public void update(Player player)
         {
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             float deltaX;
@@ -44,7 +52,7 @@ namespace JacobZombieShooter
             {
                 Position.Y += Speed.Y;
             }
-            bullets.Add(new evil(Position, Color, 0, 0, 0, 0));
+           // BadBullets.Add(new evil(Position, Color, 0, 0, 0, 0));
         }
     }
 }
