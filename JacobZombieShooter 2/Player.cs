@@ -11,8 +11,6 @@ namespace JacobZombieShooter
 {
     class Player : Sprite
     {
-        Vector2 origin;
-       public float rotation;
        public Vector2 speed;
         public bool gameOver = false;
 
@@ -21,24 +19,18 @@ namespace JacobZombieShooter
         {
             get
             {
-                return new Rectangle((int)(Position.X - origin.X), (int)(Position.Y - origin.Y), Image.Width, Image.Height);
+                return new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), Image.Width, Image.Height);
             }
         }
 
 
         public Player(Texture2D image, Vector2 position, Color color, Vector2 Speed)
-            : base(image, position, color,0,0)
+            : base(image, position, color,1,1)
         {
-            rotation = 0;
+            Rotation = 0;
             speed = Speed;
-            origin = new Vector2(image.Width / 2f, image.Height / 2f);
+            Origin = new Vector2(image.Width / 2f, image.Height / 2f);
             originalSpeedMagnitude = speed.Length();
-        }
-
-        public override void Draw(SpriteBatch spritebatch)
-        {
-            spritebatch.Draw(Image, Position, null, Color, rotation, origin, 1f, SpriteEffects.None, 0);
-          
         }
 
         public void Update(KeyboardState ks, GamePadState gs)
@@ -46,7 +38,7 @@ namespace JacobZombieShooter
             if (gameOver == false)
             {
                 //very quick fix to tank rotation
-                origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
+                Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
                 if (ks.IsKeyDown(Keys.W))
                 {
                     Position += speed;
@@ -59,18 +51,18 @@ namespace JacobZombieShooter
                 Position.X += gs.ThumbSticks.Left.X * 3;
                 if(Math.Abs(gs.ThumbSticks.Left.X) >= 0.1 || Math.Abs(gs.ThumbSticks.Left.Y) >= 0.1)
                 {
-                    rotation = (float)Math.Atan2(gs.ThumbSticks.Left.X, gs.ThumbSticks.Left.Y);
+                    Rotation = (float)Math.Atan2(gs.ThumbSticks.Left.X, gs.ThumbSticks.Left.Y);
                 }
                 if (ks.IsKeyDown(Keys.D))
                 {
-                    rotation += .05f;
-                    speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
+                    Rotation += .05f;
+                    speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(Rotation - Math.PI / 2));
                 }
                 if (ks.IsKeyDown(Keys.A))
                 {
-                    rotation -= .05f;
+                    Rotation -= .05f;
                     //hero.Position.X -= 5;
-                    speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(rotation - Math.PI / 2));
+                    speed = ZombieShooterHelper.CalculateNewSpeed(originalSpeedMagnitude, (float)(Rotation - Math.PI / 2));
                 }
                 
             }

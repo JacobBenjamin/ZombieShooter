@@ -15,6 +15,9 @@ namespace JacobZombieShooter
         public Vector2 Position;
         public Color Color;
         public Vector2 Scale;
+        public Vector2 Origin;
+        public float Rotation;
+
         public virtual Rectangle hitbox
         {
             get
@@ -29,10 +32,12 @@ namespace JacobZombieShooter
             Image = image;
             Position = position;
             Scale = new Vector2(XScale, YScale);
+            Rotation = 0;
+            Origin = new Vector2(0, 0);
         }
         public virtual void Draw(SpriteBatch spritebatch)
         {
-            spritebatch.Draw(Image, Position, null, Color, 0, new Vector2(0, 0), Scale, SpriteEffects.None, 0);
+            spritebatch.Draw(Image, Position, null, Color, Rotation, Origin, Scale, SpriteEffects.None, 0);
         }
 
         public virtual void DrawHitBox(SpriteBatch spritebatch)
