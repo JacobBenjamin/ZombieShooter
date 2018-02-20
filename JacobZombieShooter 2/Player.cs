@@ -27,7 +27,7 @@ namespace JacobZombieShooter
         public Player(Texture2D image, Vector2 position, Color color, Vector2 Speed)
             : base(image, position, color,1,1)
         {
-            Rotation = 0;
+            Rotation = 100;
             speed = Speed;
             Origin = new Vector2(image.Width / 2f, image.Height / 2f);
             originalSpeedMagnitude = speed.Length();

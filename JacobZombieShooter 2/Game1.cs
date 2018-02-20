@@ -72,7 +72,7 @@ namespace JacobZombieShooter
         Texture2D healthimage;
         Texture2D battleGround;
         bool battle = false;
-        int lives = 5;
+        float lives = 5;
         Vector2 origin;
         Sprite background;
         bool shooting = false;
@@ -129,7 +129,7 @@ namespace JacobZombieShooter
             HeroPosition = new Vector2(1, 5);
             whatDoesATankLookLikeAgain = Content.Load<Texture2D>("tank");
             Bullet.Texture = Content.Load<Texture2D>("nugget");
-           // evil.Texture = Content.Load<Texture2D>("noodle");
+            Bullet.EvilTexture = Content.Load<Texture2D>("noodle");
             battleGround = Content.Load<Texture2D>("beez");
             ammoImage = Content.Load<Texture2D>("nuggetBox");
             buttonPlace = new Vector2(1000, 100);
@@ -236,7 +236,7 @@ namespace JacobZombieShooter
                 if (elapsedShootTime > timeToShoot)
                 {
                     elapsedShootTime = TimeSpan.Zero;
-                    Bullets.Add(new Bullet(hero.Position, color, hero.Rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2, 2));
+                    Bullets.Add(new Bullet(hero.Position, color, hero.Rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2, 2, false, 1));
                     ammo--;
                 }
 
@@ -368,6 +368,7 @@ namespace JacobZombieShooter
                             {
                                 // Labs[y].lives--;
                                 Bullets.RemoveAt(a);
+
                                 break;
                             }
                             if (Labs[y].lives == 0)
@@ -398,7 +399,9 @@ namespace JacobZombieShooter
                             if (Zombies[i].BadBullets[z].hitbox.Intersects(hero.hitbox))
                             {
                                 Zombies[i].BadBullets.RemoveAt(z);
-                                lives -= 1;
+                                lives -= .5f;
+                                hero.Color.R -= 25;
+                                hero.Color.B -= 25;
                             }
 
                         }
@@ -451,6 +454,13 @@ namespace JacobZombieShooter
                 hero.Color.B += 50;
                 healing = false;
 
+            }
+           else if(healing == true && lives  == 4.75f )
+            {
+                lives += .25f;
+                hero.Color.R += 25;
+                hero.Color.B += 25;
+                healing = false;
             }
             if (hero.hitbox.Intersects(tank.hitbox))
             {
@@ -592,7 +602,7 @@ namespace JacobZombieShooter
                 for (int i = 0; i < Zombies[a].BadBullets.Count; i++)
                 {
                     Zombies[a ].BadBullets[i].Draw(spriteBatch);
-                 //  Zombies[a].DrawHitBox(spriteBatch);
+                   Zombies[a].BadBullets[i].DrawHitBox(spriteBatch);
                 }
 
             }
