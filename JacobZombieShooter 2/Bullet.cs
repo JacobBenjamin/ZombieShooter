@@ -25,7 +25,7 @@ namespace JacobZombieShooter
             this.rotation = rotation;
             this.length = length;
         }
-         public void update (KeyboardState ks)
+         public virtual void update ()
         {
             Position += speed;
         }

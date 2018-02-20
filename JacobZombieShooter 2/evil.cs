@@ -13,12 +13,20 @@ namespace JacobZombieShooter
         public evil(Vector2 position, Color color, float rotation, float magnitude, float speedScale, float length)
             :base (position,color,rotation,magnitude,speedScale,length)
         {
-            float xComponent = magnitude * (float)Math.Cos(rotation);
-            float yComponent = magnitude * (float)Math.Sin(rotation);
-            speed = speedScale * new Vector2(xComponent, yComponent);
            
-
+           
+            speed = speedScale  * ZombieShooterHelper.CalculateNewSpeed(magnitude, rotation);
+            speed *= 5;
         }
+        public override void update()
+        {
+            base.update();
+            Position += speed;
+        }
+         
+        
+
+
        
     }
 }

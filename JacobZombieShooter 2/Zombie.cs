@@ -11,9 +11,15 @@ namespace JacobZombieShooter
     class Zombie : Sprite
     {
         public Vector2 Speed;
+        bool shooting = false;
+        float originalSpeedMagnitude;
         Player Enemy;
-       public List<evil> BadBullets;
+        TimeSpan elapsedShootTime;
+        TimeSpan timeToShoot;
+        public List<evil> BadBullets;
         public override Rectangle hitbox
+         
+
         {
             get
             {
@@ -25,10 +31,13 @@ namespace JacobZombieShooter
             Speed = speed;
             BadBullets = new List<evil> ();
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
+            originalSpeedMagnitude = speed.Length();
+            timeToShoot = TimeSpan.FromSeconds(1);
         }
 
-        public void update(Player player)
+        public void update(Player player, GameTime gameTime)
         {
+            shooting = true;
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             float deltaX;
             float deltaY;
@@ -52,7 +61,17 @@ namespace JacobZombieShooter
             {
                 Position.Y += Speed.Y;
             }
-           // BadBullets.Add(new evil(Position, Color, 0, 0, 0, 0));
+            if (shooting == true)
+            {
+                elapsedShootTime += gameTime.ElapsedGameTime;
+                if (elapsedShootTime > timeToShoot)
+                {
+                    elapsedShootTime = TimeSpan.Zero;
+                    BadBullets.Add(new evil(Position, Color, Rotation - MathHelper.PiOver2, originalSpeedMagnitude, 2, 2));
+                }
+
+            }
+         
         }
     }
 }
