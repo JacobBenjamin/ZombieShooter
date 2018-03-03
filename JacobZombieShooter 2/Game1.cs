@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace JacobZombieShooter
 {
@@ -26,6 +27,7 @@ namespace JacobZombieShooter
         int bossLives = 20;
         Vector2 position;
         Texture2D flyguy;
+        bool hack = false;
         //  bool ammopalce = true;
         int ammo = 50;
         int kills = 0;
@@ -33,12 +35,17 @@ namespace JacobZombieShooter
         bool healing = false;
         Texture2D bossBoi;
         string ded;
+        Sprite yes;
+        Sprite no;
+        string HackTalk;
         bool reload = false;
         Texture2D HappiMeel;
         int prvsLabLife;
         List<AmmoCase> ammoCases = new List<AmmoCase>();
         List<HealthCrate> healthCrates = new List<HealthCrate>();
         Texture2D ammoImage;
+        Texture2D yesImage;
+        Texture2D noImage;
         Vector2 ammoPosition;
         Vector2 HeroPosition;
         TimeSpan pastGameTime;
@@ -124,7 +131,11 @@ namespace JacobZombieShooter
             healthPosition = new Vector2(300, 300);
             lab = Content.Load<Texture2D>("place");
             Zomb = Content.Load<Texture2D>("benson");
+            yesImage = Content.Load<Texture2D>("no no");
+            noImage = Content.Load<Texture2D>("no");
+
             ded = kills.ToString();
+            HackTalk = "finish game?"; 
             bossBoi = Content.Load<Texture2D>("jerry");
             HappiMeel = Content.Load<Texture2D>("yumYum");
             HeroPosition = new Vector2(1, 5);
@@ -152,7 +163,8 @@ namespace JacobZombieShooter
             tank = new Tank(whatDoesATankLookLikeAgain, new Vector2(50, 500), color);
 
             hero = new Player(flyguy, position, color, HeroPosition);
-           
+            yes = new Sprite(yesImage, new Vector2(200, 200), Color.Green, 2,2);
+            no = new Sprite(noImage, new Vector2(700, 300), Color.Green, 1, 1);
             Zombie zombie = new Zombie(Position, Zomb, color, speed);
             boss = new Zombie(new Vector2(-100,100), bossBoi, color, speed);
 
@@ -162,10 +174,10 @@ namespace JacobZombieShooter
                 Position.X += Zomb.Width + 5;
                 Zombies.Add(new Zombie(Position, Zomb, color, speed));
             }
-            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Height - lab.Height + 1), 0), color));
-            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), GraphicsDevice.Viewport.Height - lab.Height), color));
-            Labs.Add(new Lab(lab, new Vector2(700, 0), color));
-            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), 0), color));
+            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
 
             MediaPlayer.Play(jazzLoop);
             // TODO: use this.Content to load your game content here
@@ -275,9 +287,14 @@ namespace JacobZombieShooter
             }
             if(battleFinished)
             {
-                 ded = "noice jbo boi, perss neter ro X to restrat";
-                 hero.gameOver = true;
+               
+                Zombies.Clear();
+                healthCrates.Clear();
+                ammoCases.Clear();
+                battle = false;
+                hack = true;
             }
+
             if (lives <= 0)
             {
                 ded = "yuo deid ;( perss entre ro X to restrat";
@@ -317,14 +334,15 @@ namespace JacobZombieShooter
                  
 
                     Labs.Clear();
-                    Labs.Add(new Lab(lab, new Vector2(GraphicsDevice.Viewport.Width - lab.Width, 300), color));
-                    Labs.Add(new Lab(lab, new Vector2(700, GraphicsDevice.Viewport.Height - lab.Height), color));
-                    Labs.Add(new Lab(lab, new Vector2(700, 0), color));
-                    Labs.Add(new Lab(lab, PositionB, color));
+                    Labs.Add(new Lab(lab, new Vector2(randy.Next(0,GraphicsDevice.Viewport.Width - lab.Width+1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+                    Labs.Add(new Lab(lab, new Vector2(randy.Next(0,GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+                    Labs.Add(new Lab(lab, new Vector2(randy.Next(0,GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+                    Labs.Add(new Lab(lab, new Vector2(randy.Next(0,GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
                     
                     battle = false;
                     battleFinished = false;
                     //hero.gameOver = false;
+                    
                    
 
                 }
@@ -347,6 +365,7 @@ namespace JacobZombieShooter
                 for (int a = 0; a < Bullets.Count; a++)
 
                 {
+                    
                     if (Bullets[a].hitbox.Intersects(Zombies[i].hitbox))
                     {
 
@@ -371,7 +390,7 @@ namespace JacobZombieShooter
                         
                         ded = kills.ToString();
                         int drop = randy.Next(1, 11);
-
+                        
                         if (drop == 1)
                         {
                             healthCrates.Add(new HealthCrate(healthimage, deathPlace, color));
@@ -604,21 +623,34 @@ namespace JacobZombieShooter
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            //GraphicsDevice.Clear(Color.Gold);
+            
             spriteBatch.Begin();
-            background.Draw(spriteBatch);
-            hero.Draw(spriteBatch);
+            
+            if(hack)
+            {
+                GraphicsDevice.Clear(Color.Black);
+                spriteBatch.DrawString(font, HackTalk, Vector2.Zero, Color.Green);
+                yes.Draw(spriteBatch);
+                no.Draw(spriteBatch);                
+            }
+            else if (!hack)
+            {
+                background.Draw(spriteBatch);
+              
+                tank.Draw(spriteBatch);
+                spriteBatch.DrawString(font, ded, Vector2.Zero, Color.White);
+                spriteBatch.DrawString(font, ammo.ToString(), new Vector2(1900, 0), color);
+            }
             //hero.DrawHitBox(spriteBatch);
-            spriteBatch.DrawString(font, ded, Vector2.Zero, Color.White);
-            spriteBatch.DrawString(font, ammo.ToString(), new Vector2(1900, 0), color);
+           
             //spriteBatch.DrawString(font, "yeet", buttonPlace, Color.Black);
             for (int a = 0; a < healthCrates.Count; a++)
             {
                 healthCrates[a].Draw(spriteBatch);
             }
-         //   healthCrate.DrawHitBox(spriteBatch);
-            tank.Draw(spriteBatch);
-           // tank.DrawHitBox(spriteBatch);
+            //   healthCrate.DrawHitBox(spriteBatch);
+            hero.Draw(spriteBatch);
+            // tank.DrawHitBox(spriteBatch);
             if (battle&&!battleFinished)
             {
                 boss.Draw(spriteBatch);
@@ -642,8 +674,8 @@ namespace JacobZombieShooter
             {
                 for (int i = 0; i < Zombies[a].BadBullets.Count; i++)
                 {
-                    Zombies[a ].BadBullets[i].Draw(spriteBatch);
-                   Zombies[a].BadBullets[i].DrawHitBox(spriteBatch);
+                    Zombies[a].BadBullets[i].Draw(spriteBatch);
+                   Zombies[a].BadBullets[i].DrawHitBox(spriteBatch, GraphicsDevice);
                 }
 
             }

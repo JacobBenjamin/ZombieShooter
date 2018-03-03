@@ -40,9 +40,12 @@ namespace JacobZombieShooter
             spritebatch.Draw(Image, Position, null, Color, Rotation, Origin, Scale, SpriteEffects.None, 0);
         }
 
-        public virtual void DrawHitBox(SpriteBatch spritebatch)
+        public virtual void DrawHitBox(SpriteBatch spritebatch, GraphicsDevice graphicsDevice)
         {
-            spritebatch.Draw(Image, hitbox, Color.Red);
+            Texture2D pixel = new Texture2D(graphicsDevice, 1, 1);
+            pixel.SetData(new Color[] { Color.White });
+
+            spritebatch.Draw(pixel, hitbox, Color.Red);
         }
         
         
