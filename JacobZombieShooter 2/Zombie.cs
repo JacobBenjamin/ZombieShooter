@@ -39,7 +39,7 @@ namespace JacobZombieShooter
 
         public void update(Player player, GameTime gameTime)
         {
-            shooting = true;
+            
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             float deltaX;
             float deltaY;
@@ -63,8 +63,7 @@ namespace JacobZombieShooter
             {
                 Position.Y += Speed.Y;
             }
-            if (shooting == true)
-            {
+            
                 elapsedShootTime += gameTime.ElapsedGameTime;
                 if (elapsedShootTime > timeToShoot)
                 {
@@ -72,7 +71,7 @@ namespace JacobZombieShooter
                    BadBullets.Add(new Bullet(Position, Color, Rotation - MathHelper.PiOver2, originalSpeedMagnitude, 2, 2, true, 2 ));
                 }
 
-            }
+            
          
         }
     }

@@ -44,6 +44,7 @@
     <Compile Include="AmmoCase.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="GameOver.cs" />
     <Compile Include="HealthCrate.cs" />
     <Compile Include="Lab.cs" />
     <Compile Include="Pickup.cs" />
