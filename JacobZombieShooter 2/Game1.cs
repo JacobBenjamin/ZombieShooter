@@ -24,7 +24,7 @@ namespace JacobZombieShooter
         GraphicsDeviceManager graphics;
         SpriteFont font;
         SpriteBatch spriteBatch;
-        int bossLives = 20;
+        bool respawining = false;
         Vector2 position;
         Texture2D flyguy;
         bool hack = false;
@@ -51,7 +51,7 @@ namespace JacobZombieShooter
         TimeSpan pastGameTime;
         Vector2 BPostion;
         Vector2 PositionB;
-        Zombie boss;
+        boss boss;
         Vector2 deathPlace;
         Rectangle buttonA;
         Vector2 buttonPlace;
@@ -166,7 +166,7 @@ namespace JacobZombieShooter
             yes = new Sprite(yesImage, new Vector2(200, 200), Color.Green, 2, 2);
             no = new Sprite(noImage, new Vector2(700, 300), Color.Green, 1, 1);
             Zombie zombie = new Zombie(Position, Zomb, color, speed);
-            boss = new Zombie(new Vector2(-100, 100), bossBoi, color, speed);
+            boss = new boss(new Vector2(-100, 100), bossBoi, color, speed);
 
             for (int i = 0; i < 3; i++)
             {
@@ -215,7 +215,11 @@ namespace JacobZombieShooter
             if (hero.gameOver == false && battle == true && battleFinished == false)
             {
                    boss.update(hero, gameTime);
-            }
+                for (int i = 0; i < boss.BadBullets.Count; i++)
+                {
+                    boss.BadBullets[i].update();
+                }
+                }
             if (ms.LeftButton == ButtonState.Pressed && ms.X == buttonPlace.X && ms.Y == buttonPlace.Y)
             {
                 flyguy = Content.Load<Texture2D>("flyguy");
@@ -277,17 +281,32 @@ namespace JacobZombieShooter
                 {
                     if (Bullets[a].hitbox.Intersects(boss.hitbox))
                     {
-                        bossLives--;
+                        boss.bossLives--;
                         Bullets.RemoveAt(a);
 
                     }
+                   
                 }
+                if (battle && !battleFinished)
+                {
 
+                    respawining = true;
+
+
+                }
+                if (respawining)
+                {
+
+                    boss.respawn();
+                    respawining = false;
+                }
             }
-            if (bossLives == 0)
+            
+            if (boss.bossLives == 0)
             {
                 battleFinished = true;
             }
+           
             if (battleFinished)
             {
 
@@ -389,8 +408,19 @@ namespace JacobZombieShooter
                         break;
 
                     }
-                    
-                    if (Bullets.Count > 0)
+                    for (int z = 0; z < boss.BadBullets.Count; z++)
+                    {
+                        if(boss.BadBullets[z].hitbox.Intersects(hero.hitbox))
+                        {
+                           boss.BadBullets.RemoveAt(z);
+                            lives --;
+                            hero.Color.R -= 50;
+                            hero.Color.B -= 50;
+                            continue;
+
+                        }
+                    }
+                        if (Bullets.Count > 0)
                     {
                         for (int y = 0; y < Labs.Count; y++)
                         {
@@ -499,6 +529,7 @@ namespace JacobZombieShooter
                     ammoCases.RemoveAt(x);
                 }
             }
+           
             if (reload == true)
             {
                 ammo += 50;
@@ -662,12 +693,18 @@ namespace JacobZombieShooter
             {
                 healthCrates[a].Draw(spriteBatch);
             }
+            for (int i = 0; i < boss.BadBullets.Count; i++)
+            {
+                boss.BadBullets[i].Draw(spriteBatch);
+              //  boss.BadBullets[i].DrawHitBox(spriteBatch, GraphicsDevice);
+            }
             //   healthCrate.DrawHitBox(spriteBatch);
             hero.Draw(spriteBatch);
             // tank.DrawHitBox(spriteBatch);
             if (battle && !battleFinished)
             {
                 boss.Draw(spriteBatch);
+                //boss.respawn();
             }
             for (int a = 0; a < ammoCases.Count; a++)
             {
@@ -711,7 +748,7 @@ namespace JacobZombieShooter
             lives = 5;
             boss.Position = new Vector2(-100, 100);
             ammo = 50;
-            bossLives = 20;
+            boss.bossLives = 20;
             Zombies.Clear();
             healthCrates.Clear();
             Bullets.Clear();
@@ -723,7 +760,8 @@ namespace JacobZombieShooter
             {
                 Labs[i].lives = 20;
             }
-            hero.Color.R = 255;
+           
+                hero.Color.R = 255;
             hero.Color.B = 255;
             ded = kills.ToString();
             spookSpeed = .3f;
