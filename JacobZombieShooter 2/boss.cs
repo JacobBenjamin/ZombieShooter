@@ -12,7 +12,7 @@ namespace JacobZombieShooter
     {
         Vector2 oranginalPosition;
         public int bossLives = 20;
-        public boss(Vector2 postions, Texture2D image, Color color, Vector2 speed) : base(postions, image, color, speed)
+        public boss(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(postions, image, color, speed, shoots)
         {
             oranginalPosition = postions;
         }

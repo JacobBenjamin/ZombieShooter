@@ -27,14 +27,14 @@ namespace JacobZombieShooter
                 return new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), Image.Width, Image.Height);
             }
         }
-        public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed) : base(image, postions, color, 1f, 1f)
+        public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(image, postions, color, 1f, 1f)
         {
             Speed = speed;
             BadBullets = new List<Bullet> ();
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             originalSpeedMagnitude = speed.Length();
             //bulletImage = Content.Load<Texture2D>("noodle");
-            timeToShoot = TimeSpan.FromMilliseconds(2000);
+            timeToShoot = TimeSpan.FromMilliseconds(shoots);
         }
 
         public void update(Player player, GameTime gameTime)

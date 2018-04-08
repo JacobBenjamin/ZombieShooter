@@ -24,10 +24,13 @@ namespace JacobZombieShooter
         GraphicsDeviceManager graphics;
         SpriteFont font;
         SpriteBatch spriteBatch;
+        bool freeze = false;
         bool respawining = false;
         Vector2 position;
         Texture2D flyguy;
         bool hack = false;
+        TimeSpan slomoDelay;
+        TimeSpan slomo;
         //  bool ammopalce = true;
         int ammo = 50;
         int kills = 0;
@@ -67,7 +70,7 @@ namespace JacobZombieShooter
         List<Zombie> Zombies = new List<Zombie>();
         TimeSpan lastTank;
         List<Bullet> Bullets = new List<Bullet>();
-
+        bool respawnable = false;
         List<Lab> Labs = new List<Lab>();
         Color color;
         Vector2 speed;
@@ -133,7 +136,7 @@ namespace JacobZombieShooter
             Zomb = Content.Load<Texture2D>("benson");
             yesImage = Content.Load<Texture2D>("no no");
             noImage = Content.Load<Texture2D>("no");
-
+            slomo = TimeSpan.FromMilliseconds(50);
             ded = kills.ToString();
             HackTalk = "finish game?";
             bossBoi = Content.Load<Texture2D>("jerry");
@@ -165,14 +168,14 @@ namespace JacobZombieShooter
             hero = new Player(flyguy, position, color, HeroPosition);
             yes = new Sprite(yesImage, new Vector2(200, 200), Color.Green, 2, 2);
             no = new Sprite(noImage, new Vector2(700, 300), Color.Green, 1, 1);
-            Zombie zombie = new Zombie(Position, Zomb, color, speed);
-            boss = new boss(new Vector2(-100, 100), bossBoi, color, speed);
+            Zombie zombie = new Zombie(Position, Zomb, color, speed, 2000);
+            boss = new boss(new Vector2(-100, 100), bossBoi, color, speed, 1000);
 
             for (int i = 0; i < 3; i++)
             {
 
                 Position.X += Zomb.Width + 5;
-                Zombies.Add(new Zombie(Position, Zomb, color, speed));
+                Zombies.Add(new Zombie(Position, Zomb, color, speed, 2000));
             }
             Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
             Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
@@ -201,8 +204,11 @@ namespace JacobZombieShooter
         {
 
 
-
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            slomoDelay += gameTime.ElapsedGameTime;
+            if(slomoDelay> slomo)
+            {
+                slomoDelay = TimeSpan.Zero;
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             ks = Keyboard.GetState();
             gs = GamePad.GetState(0);
@@ -212,7 +218,7 @@ namespace JacobZombieShooter
             {
                 hero.Update(ks, gs);
             }
-            if (hero.gameOver == false && battle == true && battleFinished == false)
+            if (hero.gameOver == false && battle == true && battleFinished == false&&!freeze)
             {
                    boss.update(hero, gameTime);
                 for (int i = 0; i < boss.BadBullets.Count; i++)
@@ -231,7 +237,7 @@ namespace JacobZombieShooter
             {
                 for (int i = 0; i < Labs.Count; i++)
                 {
-                    Zombies.Add(new Zombie(Labs[i].Position, Zomb, color, speed));
+                    Zombies.Add(new Zombie(Labs[i].Position, Zomb, color, speed, 2000));
                 }
 
 
@@ -249,7 +255,7 @@ namespace JacobZombieShooter
             {
                 shooting = false;
             }
-
+           
             //wwwwww
             if (shooting == true && ammo > 0)
             {
@@ -285,22 +291,11 @@ namespace JacobZombieShooter
                         Bullets.RemoveAt(a);
 
                     }
-                   
-                }
-                if (battle && !battleFinished)
-                {
-
-                    respawining = true;
-
-
-                }
-                if (respawining)
-                {
-
-                    boss.respawn();
-                    respawining = false;
+                 
                 }
             }
+                
+            
             
             if (boss.bossLives == 0)
             {
@@ -315,9 +310,35 @@ namespace JacobZombieShooter
                 ammoCases.Clear();
                 battle = false;
                 hack = true;
-             
+                respawnable = true;
+                    
             }
+            if (respawnable)
+            {
 
+                respawining = true;
+
+
+            }
+            if (respawining)
+            {
+
+                boss.respawn();
+                respawining = false;
+                respawnable = false;
+            }
+            for (int z = 0; z < boss.BadBullets.Count; z++)
+            {
+                if (boss.BadBullets[z].hitbox.Intersects(hero.hitbox))
+                {
+                    boss.BadBullets.RemoveAt(z);
+                    lives--;
+                    hero.Color.R -= 50;
+                    hero.Color.B -= 50;
+                    continue;
+
+                }
+            }
             if (lives <= 0)
             {
                 ded = "yuo deid ;( perss entre ro X to restrat";
@@ -326,8 +347,8 @@ namespace JacobZombieShooter
 
             if (hero.gameOver)
             {
-
-                Restart();
+                freeze = true;
+                Restart(ks);
                     //hero.gameOver = false;
 
 
@@ -390,11 +411,11 @@ namespace JacobZombieShooter
                         ded = kills.ToString();
                         int drop = randy.Next(1, 11);
 
-                        if (drop == 1)
+                        if (drop == 5)
                         {
                             healthCrates.Add(new HealthCrate(healthimage, deathPlace, color));
                         }
-                        else if (drop == 5)
+                        else if (drop >= 1)
                         {
                             ammoCases.Add(new AmmoCase(ammoImage, deathPlace, color));
                         }
@@ -408,18 +429,7 @@ namespace JacobZombieShooter
                         break;
 
                     }
-                    for (int z = 0; z < boss.BadBullets.Count; z++)
-                    {
-                        if(boss.BadBullets[z].hitbox.Intersects(hero.hitbox))
-                        {
-                           boss.BadBullets.RemoveAt(z);
-                            lives --;
-                            hero.Color.R -= 50;
-                            hero.Color.B -= 50;
-                            continue;
-
-                        }
-                    }
+                  
                         if (Bullets.Count > 0)
                     {
                         for (int y = 0; y < Labs.Count; y++)
@@ -446,7 +456,7 @@ namespace JacobZombieShooter
                     break;
                 }
 
-                if (hero.gameOver == false)
+                if (hero.gameOver == false&&!freeze)
                 {
                     Zombies[i].update(hero, gameTime);
 
@@ -533,6 +543,7 @@ namespace JacobZombieShooter
             if (reload == true)
             {
                 ammo += 50;
+               // freeze = true;
                 reload = false;
             }
             for (int x = 0; x < healthCrates.Count; x++)
@@ -548,6 +559,7 @@ namespace JacobZombieShooter
                 lives += 1;
                 hero.Color.R += 50;
                 hero.Color.B += 50;
+                
                 healing = false;
 
             }
@@ -556,6 +568,7 @@ namespace JacobZombieShooter
                 lives += .25f;
                 hero.Color.R += 25;
                 hero.Color.B += 25;
+                
                 healing = false;
             }
             if (hero.hitbox.Intersects(tank.hitbox))
@@ -611,43 +624,43 @@ namespace JacobZombieShooter
             {
                 shootSpeed = 100;
             }
-            //  List<Bullet> itemsToDelete;
-            if (hero.gameOver == false)
-            {
-
-                for (int i = 0; i < Bullets.Count; i++)
+                //  List<Bullet> itemsToDelete;
+                if (hero.gameOver == false)
                 {
-                    Bullets[i].update();
 
-                    if (Bullets[i].Position.Y < 0 || Bullets[i].Position.Y > GraphicsDevice.Viewport.Height || Bullets[i].Position.X < 0 || Bullets[i].Position.X > GraphicsDevice.Viewport.Width)
+                    for (int i = 0; i < Bullets.Count; i++)
                     {
-                        Bullets.RemoveAt(i);
-                        break;
+                        Bullets[i].update();
+
+                        if (Bullets[i].Position.Y < 0 || Bullets[i].Position.Y > GraphicsDevice.Viewport.Height || Bullets[i].Position.X < 0 || Bullets[i].Position.X > GraphicsDevice.Viewport.Width)
+                        {
+                            Bullets.RemoveAt(i);
+                            break;
+                        }
+                        //if (Bullets[i].Position.X < 0)
+                        //{
+                        //    Bullets[i].Position.X = GraphicsDevice.Viewport.Width;
+
+                        //}
+                        //else if (Bullets[i].Position.X > GraphicsDevice.Viewport.Width)
+                        //{
+                        //    Bullets[i].Position.X = 0;
+
+                        //}
+                        //else if (Bullets[i].Position.Y < 0)
+                        //{
+                        //    Bullets[i].Position.Y = GraphicsDevice.Viewport.Height;
+
+                        //}
+                        //else if (Bullets[i].Position.Y > GraphicsDevice.Viewport.Height)
+                        //{
+                        //    Bullets[i].Position.Y = 0;
+
+                        //}
                     }
-                    //if (Bullets[i].Position.X < 0)
-                    //{
-                    //    Bullets[i].Position.X = GraphicsDevice.Viewport.Width;
-
-                    //}
-                    //else if (Bullets[i].Position.X > GraphicsDevice.Viewport.Width)
-                    //{
-                    //    Bullets[i].Position.X = 0;
-
-                    //}
-                    //else if (Bullets[i].Position.Y < 0)
-                    //{
-                    //    Bullets[i].Position.Y = GraphicsDevice.Viewport.Height;
-
-                    //}
-                    //else if (Bullets[i].Position.Y > GraphicsDevice.Viewport.Height)
-                    //{
-                    //    Bullets[i].Position.Y = 0;
-
-                    //}
+                    
+                    //
                 }
-
-                //
-
                 prvsks = ks;
                 // TODO: Add your update logic here
                 //pastGameTime = gameTime;
@@ -741,45 +754,50 @@ namespace JacobZombieShooter
 
             base.Draw(gameTime);
         }
-        void Restart()
+        void Restart(KeyboardState ks)
         {
-            hack = false;
-            kills = 0;
-            lives = 5;
-            boss.Position = new Vector2(-100, 100);
-            ammo = 50;
-            boss.bossLives = 20;
-            Zombies.Clear();
-            healthCrates.Clear();
-            Bullets.Clear();
-            for (int i = 0; i < Zombies.Count; i++)
+            if (ks.IsKeyDown(Keys.Enter))
             {
-                Zombies[i].BadBullets.Clear();
-            }
-            for (int i = 0; i < Labs.Count; i++)
-            {
-                Labs[i].lives = 20;
-            }
-           
+                hack = false;
+                kills = 0;
+                lives = 5;
+                boss.Position = new Vector2(-100, 100);
+                ammo = 50;
+                boss.bossLives = 20;
+                Zombies.Clear();
+                healthCrates.Clear();
+                Bullets.Clear();
+                for (int i = 0; i < Zombies.Count; i++)
+                {
+                    Zombies[i].BadBullets.Clear();
+                }
+                for (int i = 0; i < Labs.Count; i++)
+                {
+                    Labs[i].lives = 20;
+                }
+
+                boss.BadBullets.Clear();
+
                 hero.Color.R = 255;
-            hero.Color.B = 255;
-            ded = kills.ToString();
-            spookSpeed = .3f;
-            shootSpeed = 100f;
-            hero.gameOver = false;
-            poweredUp = false;
-            HeroPosition.X = 1;
-            HeroPosition.Y = 5;
+                hero.Color.B = 255;
+                ded = kills.ToString();
+                spookSpeed = .3f;
+                shootSpeed = 100f;
+                hero.gameOver = false;
+                poweredUp = false;
+                HeroPosition.X = 1;
+                HeroPosition.Y = 5;
+                freeze = false;
 
+                Labs.Clear();
+                Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+                Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+                Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
+                Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
 
-            Labs.Clear();
-            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
-            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
-            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
-            Labs.Add(new Lab(lab, new Vector2(randy.Next(0, GraphicsDevice.Viewport.Width - lab.Width + 1), randy.Next(0, GraphicsDevice.Viewport.Height)), color));
-
-            battle = false;
-            battleFinished = false;
+                battle = false;
+                battleFinished = false;
+            }
         }
     }
 }
