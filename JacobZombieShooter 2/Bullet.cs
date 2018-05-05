@@ -40,7 +40,7 @@ namespace JacobZombieShooter
         }
          public virtual void update ()
         {
-            Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
+            Origin = new Vector2(Image.Width / 2f, Image.Height/2f);
             Position  += speed * fast;
         }
     }
