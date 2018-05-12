@@ -205,10 +205,10 @@ namespace JacobZombieShooter
         {
             if (!hack && !freeze)
             {
-                hero.Update(ks, gs);
+                hero.Update(ks,ms, gs);
             }
             
-                if (ks.IsKeyDown(Keys.Space) || gs.Triggers.Right > 0.95f /*&& prvsks.IsKeyUp(Keys.Space)*/)
+                if (ks.IsKeyDown(Keys.Space) || gs.Triggers.Right > 0.95f || ms.LeftButton == ButtonState.Pressed/*&& prvsks.IsKeyUp(Keys.Space)*/)
             {
                 shooting = true;
             }
@@ -264,7 +264,7 @@ namespace JacobZombieShooter
                 }
                 //dddd
                 //boss.update(hero, gameTime);
-                if (gameTime.TotalGameTime - pastGameTime > TimeSpan.FromSeconds(1) && hero.gameOver == false)
+                if (gameTime.TotalGameTime - pastGameTime > TimeSpan.FromMilliseconds(1000) && hero.gameOver == false)
                 {
                     for (int i = 0; i < Labs.Count; i++)
                     {
@@ -454,8 +454,9 @@ namespace JacobZombieShooter
                             {
                                 if (Bullets[a].hitbox.Intersects(Labs[y].hitbox))
                                 {
+                                Bullets.RemoveAt(a);
                                     Labs[y].lives--;
-                                    Bullets.RemoveAt(a);
+                                   
 
                                     break;
                                 }
@@ -552,7 +553,7 @@ namespace JacobZombieShooter
                 if (reload == true)
                 {
                     ammo += 50;
-                    speshal = true;
+                 //   speshal = true;
                     reload = false;
                 }
                 for (int x = 0; x < healthCrates.Count; x++)
@@ -739,7 +740,7 @@ namespace JacobZombieShooter
             for (int i = 0; i < Labs.Count; i++)
             {
                 Labs[i].Draw(spriteBatch);
-                //  Labs[i].DrawHitBox(spriteBatch);
+                 Labs[i].DrawHitBox(spriteBatch,GraphicsDevice);
             }
             for (int i = 0; i < Bullets.Count; i++)
             {
@@ -777,6 +778,7 @@ namespace JacobZombieShooter
             boss.bossLives = 20;
             Zombies.Clear();
             healthCrates.Clear();
+            ammoCases.Clear();
             Bullets.Clear();
             for (int i = 0; i < Zombies.Count; i++)
             {

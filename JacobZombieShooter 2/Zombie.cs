@@ -44,27 +44,27 @@ namespace JacobZombieShooter
             float deltaX;
             float deltaY;
             deltaX = Position.X - player.Position.X;
+           
             deltaY = Position.Y - player.Position.Y;
             Rotation = (float)Math.Atan2(-deltaX, deltaY);
+            //if (Position.X > player.Position.X)
+            //{
+            //    Position.X -= Speed.X;
+            //}
+            //else if (Position.X < player.Position.X)
+            //{
+            //    Position.X += Speed.X;
+            //}
+            //if (Position.Y > player.Position.Y)
+            //{
+            //    Position.Y -= Speed.Y;
+            //}
+            //else if (Position.Y < player.Position.Y)
+            //{
+            //    Position.Y += Speed.Y;
+            //}
 
-            if (Position.X > player.Position.X)
-            {
-                Position.X -= Speed.X;
-            }
-            else if (Position.X < player.Position.X)
-            {
-                Position.X += Speed.X;
-            }
-            if (Position.Y > player.Position.Y)
-            {
-                Position.Y -= Speed.Y;
-            }
-            else if (Position.Y < player.Position.Y)
-            {
-                Position.Y += Speed.Y;
-            }
-            
-                elapsedShootTime += gameTime.ElapsedGameTime;
+            elapsedShootTime += gameTime.ElapsedGameTime;
                 if (elapsedShootTime > timeToShoot)
                 {
                     elapsedShootTime = TimeSpan.Zero;
@@ -73,6 +73,31 @@ namespace JacobZombieShooter
 
             
          
+        }
+        public void Muve()
+        {
+            Random randy;
+            randy = new Random();
+            Vector2 currentPosition;
+            Vector2 goal;
+            currentPosition = Position;
+            int direction = randy.Next(1, 5);
+            if (direction == 1)
+            {
+             goal = (float)(currentPosition.X) + 100;
+            }
+            if (direction == 2)
+            {
+                Position.X -= 100;
+            }
+            if (direction == 3)
+            {
+                Position.Y -= 100;
+            }
+            if (direction == 4)
+            {
+                Position.Y += 100;
+            }
         }
     }
 }
