@@ -14,7 +14,10 @@ namespace JacobZombieShooter
         bool shooting = false;
         float originalSpeedMagnitude;
         Player Enemy;
-      
+        Random randy;
+        Vector2 goal;
+
+        int direction;
         TimeSpan elapsedShootTime;
         TimeSpan timeToShoot;
         public List<Bullet> BadBullets;
@@ -27,10 +30,12 @@ namespace JacobZombieShooter
                 return new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), Image.Width, Image.Height);
             }
         }
-        public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(image, postions, color, 1f, 1f)
+        public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(image, postions, color, .5f, .5f)
         {
             Speed = speed;
             BadBullets = new List<Bullet> ();
+            randy = new Random();
+            direction = randy.Next(1, 5);
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             originalSpeedMagnitude = speed.Length();
             //bulletImage = Content.Load<Texture2D>("noodle");
@@ -47,22 +52,7 @@ namespace JacobZombieShooter
            
             deltaY = Position.Y - player.Position.Y;
             Rotation = (float)Math.Atan2(-deltaX, deltaY);
-            //if (Position.X > player.Position.X)
-            //{
-            //    Position.X -= Speed.X;
-            //}
-            //else if (Position.X < player.Position.X)
-            //{
-            //    Position.X += Speed.X;
-            //}
-            //if (Position.Y > player.Position.Y)
-            //{
-            //    Position.Y -= Speed.Y;
-            //}
-            //else if (Position.Y < player.Position.Y)
-            //{
-            //    Position.Y += Speed.Y;
-            //}
+          
 
             elapsedShootTime += gameTime.ElapsedGameTime;
                 if (elapsedShootTime > timeToShoot)
@@ -76,27 +66,97 @@ namespace JacobZombieShooter
         }
         public void Muve()
         {
-            Random randy;
-            randy = new Random();
             Vector2 currentPosition;
-            Vector2 goal;
             currentPosition = Position;
-            int direction = randy.Next(1, 5);
+            
             if (direction == 1)
             {
-             goal = (float)(currentPosition.X) + 100;
+             
+                if (Position.X < goal.X)
+                {
+                    Position.X++;
+                }
+                else
+                {
+                    ChangeGoal();
+                }
             }
             if (direction == 2)
             {
-                Position.X -= 100;
+               
+                if (Position.X > goal.X)
+                {
+                    Position.X--;
+                }
+                else
+                {
+                    ChangeGoal();
+                }
             }
             if (direction == 3)
             {
-                Position.Y -= 100;
+           
+                if (Position.Y < goal.Y)
+                {
+                    Position.Y++;
+                }
+                else
+                {
+                    ChangeGoal();
+                }
             }
             if (direction == 4)
             {
-                Position.Y += 100;
+               
+                if (Position.Y > goal.Y)
+                {
+                    Position.Y--;
+                }
+                else
+                {
+                    ChangeGoal();
+                }
+            }
+        }
+
+        void ChangeGoal()
+        {
+            direction = randy.Next(1, 5);
+
+            if (direction == 1)
+            {
+                goal = new Vector2((float)Position.X + 50, Position.X);
+            }
+            if (direction == 2)
+            {
+                goal = new Vector2((float)Position.X - 50, Position.X);
+            }
+            if (direction == 3)
+            {
+                goal = new Vector2(Position.Y, (float)Position.Y + 50);
+            }
+            if (direction == 4)
+            {
+                goal = new Vector2(Position.Y, (float)Position.Y - 50);
+            }
+        }
+        public void otherMuve(Player player)
+        {
+            if (Position.X > player.Position.X)
+            {
+                Position.X -= Speed.X;
+            }
+            else if (Position.X < player.Position.X)
+            {
+                Position.X += Speed.X;
+            }
+            if (Position.Y > player.Position.Y)
+            {
+                Position.Y -= Speed.Y;
+            }
+            else if (Position.Y < player.Position.Y)
+            {
+                Position.Y += Speed.Y;
             }
         }
     }

@@ -134,7 +134,7 @@ namespace JacobZombieShooter
             ammoPosition = new Vector2(500, 500);
             healthPosition = new Vector2(300, 300);
             lab = Content.Load<Texture2D>("place");
-            Zomb = Content.Load<Texture2D>("benson");
+            Zomb = Content.Load<Texture2D>("enemy");
             yesImage = Content.Load<Texture2D>("no no");
             noImage = Content.Load<Texture2D>("no");
             slomo = TimeSpan.FromMilliseconds(60);
@@ -252,6 +252,7 @@ namespace JacobZombieShooter
                 if (hero.gameOver == false && battle == true && battleFinished == false && !freeze)
                 {
                     boss.update(hero, gameTime);
+                    boss.otherMuve(hero); 
                     for (int i = 0; i < boss.BadBullets.Count; i++)
                     {
                         boss.BadBullets[i].update();
@@ -390,7 +391,26 @@ namespace JacobZombieShooter
                 {
                     Zombies[i].Speed = speed = new Vector2(spookSpeed, spookSpeed);
                     bool breaking = false;
-
+                    if (freeze ==false)
+                    {
+                        Zombies[i].Muve();
+                    }
+                    if(Zombies[i].Position.X>GraphicsDevice.Viewport.Width)
+                    {
+                        Zombies.RemoveAt(i);
+                    }
+                   else if (Zombies[i].Position.X < 0)
+                    {
+                        Zombies.RemoveAt(i);
+                    }
+                  else  if (Zombies[i].Position.Y > GraphicsDevice.Viewport.Height)
+                    {
+                        Zombies.RemoveAt(i);
+                    }
+                    else if (Zombies[i].Position.Y < 0)
+                    {
+                        Zombies.RemoveAt(i);
+                    }
                     if (hero.hitbox.Intersects(Zombies[i].hitbox))
                     {
                         Zombies.RemoveAt(i);
@@ -740,12 +760,12 @@ namespace JacobZombieShooter
             for (int i = 0; i < Labs.Count; i++)
             {
                 Labs[i].Draw(spriteBatch);
-                 Labs[i].DrawHitBox(spriteBatch,GraphicsDevice);
+                // Labs[i].DrawHitBox(spriteBatch,GraphicsDevice);
             }
             for (int i = 0; i < Bullets.Count; i++)
             {
                 Bullets[i].Draw(spriteBatch);
-                Bullets[i].DrawHitBox(spriteBatch, GraphicsDevice);
+               // Bullets[i].DrawHitBox(spriteBatch, GraphicsDevice);
             }
             for (int a = 0; a < Zombies.Count; a++)
             {
