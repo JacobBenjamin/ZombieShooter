@@ -411,7 +411,7 @@ namespace JacobZombieShooter
                     {
                         Zombies.RemoveAt(i);
                     }
-                    if (hero.hitbox.Intersects(Zombies[i].hitbox))
+                   else if (hero.hitbox.Intersects(Zombies[i].hitbox))
                     {
                         Zombies.RemoveAt(i);
                         lives--;
@@ -732,7 +732,7 @@ namespace JacobZombieShooter
                 spriteBatch.DrawString(font, ded, Vector2.Zero, Color.White);
                 spriteBatch.DrawString(font, ammo.ToString(), new Vector2(1900, 0), color);
             }
-            //hero.DrawHitBox(spriteBatch);
+           // hero.DrawHitBox(spriteBatch,GraphicsDevice);
 
             //spriteBatch.DrawString(font, "yeet", buttonPlace, Color.Black);
             for (int a = 0; a < healthCrates.Count; a++)
@@ -772,14 +772,14 @@ namespace JacobZombieShooter
                 for (int i = 0; i < Zombies[a].BadBullets.Count; i++)
                 {
                     Zombies[a].BadBullets[i].Draw(spriteBatch);
-                    //Zombies[a].BadBullets[i].DrawHitBox(spriteBatch, GraphicsDevice);
+                   // Zombies[a].BadBullets[i].DrawHitBox(spriteBatch, GraphicsDevice);
                 }
 
             }
             for (int i = 0; i < Zombies.Count; i++)
             {
                 Zombies[i].Draw(spriteBatch);
-                // Zombies[i].DrawHitBox(spriteBatch);
+             //  Zombies[i].DrawHitBox(spriteBatch,GraphicsDevice);
             }
 
             spriteBatch.End();

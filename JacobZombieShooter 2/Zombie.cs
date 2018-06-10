@@ -30,7 +30,7 @@ namespace JacobZombieShooter
                 return new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), Image.Width, Image.Height);
             }
         }
-        public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(image, postions, color, .5f, .5f)
+        public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(image, postions, color, 1, 1)
         {
             Speed = speed;
             BadBullets = new List<Bullet> ();
