@@ -12,17 +12,19 @@ namespace JacobZombieShooter
     {
         public Vector2 Speed;
         bool shooting = false;
+        public bool badShooting = false;
         float originalSpeedMagnitude;
+        int Shoots;
         Player Enemy;
         Random randy;
         Vector2 goal;
-
+        //float speed  1;
         int direction;
         TimeSpan elapsedShootTime;
         TimeSpan timeToShoot;
         public List<Bullet> BadBullets;
         public override Rectangle hitbox
-         
+
 
         {
             get
@@ -33,7 +35,8 @@ namespace JacobZombieShooter
         public Zombie(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(image, postions, color, 1, 1)
         {
             Speed = speed;
-            BadBullets = new List<Bullet> ();
+            Shoots = shoots;
+            BadBullets = new List<Bullet>();
             randy = new Random();
             direction = randy.Next(1, 5);
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
@@ -44,34 +47,54 @@ namespace JacobZombieShooter
 
         public void update(Player player, GameTime gameTime)
         {
-            
+
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             float deltaX;
             float deltaY;
             deltaX = Position.X - player.Position.X;
-           
-            deltaY = Position.Y - player.Position.Y;
-            Rotation = (float)Math.Atan2(-deltaX, deltaY);
-          
-
-            elapsedShootTime += gameTime.ElapsedGameTime;
-                if (elapsedShootTime > timeToShoot)
+            if (badShooting)
+            {
+                Shoots *= 2;
+                for (int i = 0; i < BadBullets.Count; i++)
                 {
-                    elapsedShootTime = TimeSpan.Zero;
-                   BadBullets.Add(new Bullet(Position, Color, Rotation - MathHelper.PiOver2, originalSpeedMagnitude, 2, 2, true, 2 ));
+                    BadBullets[i].speed *= 10000;
                 }
+            }
+            //else
+            //{
+            //    Shoots /= 2;
+            //    for (int i = 0; i < BadBullets.Count; i++)
+            //    {
+            //        BadBullets[i].speed /= 2;
+            //    }
+            //}
+            for (int i = 0; i < BadBullets.Count; i++)
+            {
+                BadBullets[i].update();
+            }
+                deltaY = Position.Y - player.Position.Y;
+            Rotation = (float)Math.Atan2(-deltaX, deltaY);
 
-            
-         
+            //when the player is shooting make timeToShoot smaller
+            elapsedShootTime += gameTime.ElapsedGameTime;
+            if (elapsedShootTime > timeToShoot)
+            {
+                elapsedShootTime = TimeSpan.Zero;
+                BadBullets.Add(new Bullet(Position, Color, Rotation - MathHelper.PiOver2, originalSpeedMagnitude, 2, 2, true));
+                //BadBullets[BadBullets.Count - 1].fast = 0.1f;
+            }
+
+
+
         }
         public void Muve()
         {
             Vector2 currentPosition;
             currentPosition = Position;
-            
+
             if (direction == 1)
             {
-             
+
                 if (Position.X < goal.X)
                 {
                     Position.X++;
@@ -83,7 +106,7 @@ namespace JacobZombieShooter
             }
             if (direction == 2)
             {
-               
+
                 if (Position.X > goal.X)
                 {
                     Position.X--;
@@ -95,7 +118,7 @@ namespace JacobZombieShooter
             }
             if (direction == 3)
             {
-           
+
                 if (Position.Y < goal.Y)
                 {
                     Position.Y++;
@@ -107,7 +130,7 @@ namespace JacobZombieShooter
             }
             if (direction == 4)
             {
-               
+
                 if (Position.Y > goal.Y)
                 {
                     Position.Y--;
