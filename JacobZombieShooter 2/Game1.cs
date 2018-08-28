@@ -209,12 +209,39 @@ namespace JacobZombieShooter
                 hero.Update(ks, ms, gs);
             }
 
+            if (ks.IsKeyUp(Keys.Space) || gs.Triggers.Right < 0.95f || ms.LeftButton == ButtonState.Pressed)
+            {
+                shooting = false;
+                for (int i = 0; i < Bullets.Count; i++)
+                {
+                    Bullets[i].CanSlowDown = true;
+                }
+                    for (int i = 0; i < Zombies.Count; i++)
+                {
+                    Zombies[i].badShooting = false;
+                    Zombies[i].slow = true;
+                    for (int j = 0; j < Zombies[i].BadBullets.Count; j++)
+                    {
+                        Zombies[i].BadBullets[j].CanSlowDown = true;
+                    }
+                }
+            }
+
             if (ks.IsKeyDown(Keys.Space) || gs.Triggers.Right > 0.95f || ms.LeftButton == ButtonState.Pressed/*&& prvsks.IsKeyUp(Keys.Space)*/)
             {
                 shooting = true;
-                for(int i = 0; i < Zombies.Count; i++)
+                for (int i = 0; i < Bullets.Count; i++)
+                {
+                    Bullets[i].CanSlowDown = false;
+                }
+                for (int i = 0; i < Zombies.Count; i++)
                 {
                     Zombies[i].badShooting = true;
+                    Zombies[i].slow = false;
+                    for (int j = 0; j < Zombies[i].BadBullets.Count; j++)
+                    {
+                        Zombies[i].BadBullets[j].CanSlowDown = false;
+                    }
                 }
             }
             if (shooting == true /*&& ammo > 0*/ && !freeze)
@@ -226,7 +253,7 @@ namespace JacobZombieShooter
                     elapsedShootTime = TimeSpan.Zero;
                     
                     Bullets.Add(new Bullet(hero.Position, color, hero.Rotation - MathHelper.PiOver2, hero.originalSpeedMagnitude, 2, 2, false));
-                    Bullets[Bullets.Count - 1].fast = 0;
+                    Bullets[Bullets.Count - 1].fast = 0;                    
                     // ammo--;
                 }
 
@@ -235,15 +262,7 @@ namespace JacobZombieShooter
             {
 
                 Bullets[i].update();
-            }
-            if (ks.IsKeyUp(Keys.Space) || gs.Triggers.Right < 0.95f || ms.LeftButton == ButtonState.Pressed)
-            {
-                shooting = false;
-                for (int i = 0; i < Zombies.Count; i++)
-                {
-                    Zombies[i].badShooting = false;
-                }
-            }
+            }         
 
             if (!shooting)
             {

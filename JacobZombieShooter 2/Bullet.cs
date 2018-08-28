@@ -18,10 +18,10 @@ namespace JacobZombieShooter
         public Vector2 speed;
         float length = 1.5f;
 
+        public bool CanSlowDown = false;
+
         public float fast = 0.5f;
         public override Rectangle hitbox
-
-
         {
             get
             {
@@ -34,12 +34,16 @@ namespace JacobZombieShooter
             Origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
             speed = speedScale * ZombieShooterHelper.CalculateNewSpeed(magnitude, rotation);
             //this.turn = turn;
-            Rotation = rotation;            
+            Rotation = rotation;
             this.length = length;
         }
         public virtual void update()
         {
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
+            if (CanSlowDown == true)
+            {
+                Position += speed / 2;
+            }
             //if (speed.X < 0)
             //{
             //    speed.X += fast;
@@ -56,7 +60,10 @@ namespace JacobZombieShooter
             //{
             //    speed.Y -= fast;
             //}
-            Position += speed;
+            else
+            {
+                Position += speed;
+            }
         }
     }
 }

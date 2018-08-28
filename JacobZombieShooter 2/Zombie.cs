@@ -13,6 +13,9 @@ namespace JacobZombieShooter
         public Vector2 Speed;
         bool shooting = false;
         public bool badShooting = false;
+        public bool slow;
+        
+        Vector2 normal;
         float originalSpeedMagnitude;
         int Shoots;
         Player Enemy;
@@ -36,11 +39,13 @@ namespace JacobZombieShooter
         {
             Speed = speed;
             Shoots = shoots;
+            normal = speed;
             BadBullets = new List<Bullet>();
             randy = new Random();
             direction = randy.Next(1, 5);
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             originalSpeedMagnitude = speed.Length();
+            
             //bulletImage = Content.Load<Texture2D>("noodle");
             timeToShoot = TimeSpan.FromMilliseconds(shoots);
         }
@@ -52,13 +57,19 @@ namespace JacobZombieShooter
             float deltaX;
             float deltaY;
             deltaX = Position.X - player.Position.X;
-            if (badShooting)
+            if (!badShooting)
             {
-                Shoots *= 2;
-                for (int i = 0; i < BadBullets.Count; i++)
-                {
-                    BadBullets[i].speed *= 10000;
-                }
+                
+                //Shoots *= 2;
+                //for (int i = 0; i < BadBullets.Count; i++)
+                //{
+                //    BadBullets[i].speed *= 10000;
+                //}
+            }
+            else
+            {
+                
+
             }
             //else
             //{
@@ -80,7 +91,7 @@ namespace JacobZombieShooter
             if (elapsedShootTime > timeToShoot)
             {
                 elapsedShootTime = TimeSpan.Zero;
-                BadBullets.Add(new Bullet(Position, Color, Rotation - MathHelper.PiOver2, originalSpeedMagnitude, 2, 2, true));
+                BadBullets.Add(new Bullet(Position, Color, Rotation - MathHelper.PiOver2, originalSpeedMagnitude, 2, 2, true));                
                 //BadBullets[BadBullets.Count - 1].fast = 0.1f;
             }
 
@@ -91,53 +102,106 @@ namespace JacobZombieShooter
         {
             Vector2 currentPosition;
             currentPosition = Position;
-
-            if (direction == 1)
+            if (slow == false)
             {
+                if (direction == 1)
+                {
 
-                if (Position.X < goal.X)
-                {
-                    Position.X++;
+                    if (Position.X < goal.X)
+                    {
+                        Position.X++;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
                 }
-                else
+                if (direction == 2)
                 {
-                    ChangeGoal();
+
+                    if (Position.X > goal.X)
+                    {
+                        Position.X--;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
+                }
+                if (direction == 3)
+                {
+
+                    if (Position.Y < goal.Y)
+                    {
+                        Position.Y++;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
+                }
+                if (direction == 4)
+                {
+
+                    if (Position.Y > goal.Y)
+                    {
+                        Position.Y--;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
                 }
             }
-            if (direction == 2)
+            else
             {
+                if (direction == 1)
+                {
 
-                if (Position.X > goal.X)
-                {
-                    Position.X--;
+                    if (Position.X < goal.X)
+                    {
+                        Position.X+= .5f;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
                 }
-                else
+                if (direction == 2)
                 {
-                    ChangeGoal();
-                }
-            }
-            if (direction == 3)
-            {
 
-                if (Position.Y < goal.Y)
-                {
-                    Position.Y++;
+                    if (Position.X > goal.X)
+                    {
+                        Position.X -= .5f;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
                 }
-                else
+                if (direction == 3)
                 {
-                    ChangeGoal();
-                }
-            }
-            if (direction == 4)
-            {
 
-                if (Position.Y > goal.Y)
-                {
-                    Position.Y--;
+                    if (Position.Y < goal.Y)
+                    {
+                        Position.Y += .5f;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
                 }
-                else
+                if (direction == 4)
                 {
-                    ChangeGoal();
+
+                    if (Position.Y > goal.Y)
+                    {
+                        Position.Y -= .5f;
+                    }
+                    else
+                    {
+                        ChangeGoal();
+                    }
                 }
             }
         }
@@ -165,6 +229,7 @@ namespace JacobZombieShooter
         }
         public void otherMuve(Player player)
         {
+
             if (Position.X > player.Position.X)
             {
                 Position.X -= Speed.X;
