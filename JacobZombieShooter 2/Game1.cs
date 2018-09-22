@@ -61,10 +61,12 @@ namespace JacobZombieShooter
         Vector2 buttonPlace;
         Vector2 healthPosition;
         Tank tank;
+        bool meelee = false;
         bool poweredUp = false;
         Random randy;
         float spookSpeed = .3f;
         int level = 1;
+        Texture2D sword;
         Vector2 Position;
         Texture2D Zomb;
         Player hero;
@@ -151,7 +153,7 @@ namespace JacobZombieShooter
             buttonPlace = new Vector2(1000, 100);
             healthimage = Content.Load<Texture2D>("amazing3D");
             Song jazzLoop = Content.Load<Song>("jazzloop");
-
+            sword = Content.Load<Texture2D>("blade");
             BPostion = position;
             color = Color.White;
             spookIncrease = false;
@@ -335,6 +337,19 @@ namespace JacobZombieShooter
 
             //wwwwww
 
+            if(ks.IsKeyDown(Keys.E))
+            {
+                meelee = true;
+            }
+            if(ks.IsKeyUp(Keys.E))
+            {
+                meelee = false;
+            }
+            if (meelee)
+            {
+                hero.Image = sword;
+                shooting = false;
+            }
 
 
             if (Labs.Count <= 0 && !battleFinished)
@@ -399,9 +414,13 @@ namespace JacobZombieShooter
                 if (boss.BadBullets[z].hitbox.Intersects(hero.hitbox))
                 {
                     boss.BadBullets.RemoveAt(z);
-                    lives--;
-                    hero.Color.R -= 50;
-                    hero.Color.B -= 50;
+                    if (!meelee)
+                    {
+                        lives--;
+
+                        hero.Color.R -= 50;
+                        hero.Color.B -= 50;
+                    }
                     continue;
 
                 }
@@ -488,9 +507,14 @@ namespace JacobZombieShooter
                     {
                         i--;
                     }
-                    lives--;
-                    hero.Color.R -= 50;
-                    hero.Color.B -= 50;
+
+                    if (!meelee)
+                     {
+                        lives--;
+
+                        hero.Color.R -= 50;
+                        hero.Color.B -= 50;
+                    }
                     break;
                 }
 
@@ -586,10 +610,15 @@ namespace JacobZombieShooter
                                 if (Zombies[i].BadBullets[z].hitbox.Intersects(hero.hitbox))
                                 {
                                     Zombies[i].BadBullets.RemoveAt(z);
-                                    lives -= .5f;
+                                if (!meelee)
+                                
+                    {
+                                    lives-=.5f;
+
                                     hero.Color.R -= 25;
                                     hero.Color.B -= 25;
-                                    continue;
+                                }
+                                continue;
                                 }
 
 
@@ -810,7 +839,7 @@ namespace JacobZombieShooter
                 spriteBatch.DrawString(font, ded, Vector2.Zero, Color.White);
                 // spriteBatch.DrawString(font, ammo.ToString(), new Vector2(1900, 0), color);
             }
-            // hero.DrawHitBox(spriteBatch,GraphicsDevice);
+             hero.DrawHitBox(spriteBatch,GraphicsDevice);
 
             //spriteBatch.DrawString(font, "yeet", buttonPlace, Color.Black);
             for (int a = 0; a < healthCrates.Count; a++)
