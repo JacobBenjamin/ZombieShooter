@@ -18,7 +18,7 @@ namespace JacobZombieShooter
         }
         public void respawn()
         {
-            bossLives = 20;
+            bossLives = 50;
             Position = oranginalPosition;
         }
     }

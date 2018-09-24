@@ -732,7 +732,7 @@ namespace JacobZombieShooter
                     }
                     lastTank += gameTime.ElapsedGameTime;
                 }
-                else
+                else if(!meelee)
                 {
                     hero.Image = flyguy;
                     for (int u = 0; u < Bullets.Count; u++)
@@ -902,7 +902,7 @@ namespace JacobZombieShooter
             lives = 5;
             boss.Position = new Vector2(-100, 100);
             //ammo = 50;
-            boss.bossLives = 20;
+            boss.bossLives = 50;
             Zombies.Clear();
             healthCrates.Clear();
             ammoCases.Clear();
