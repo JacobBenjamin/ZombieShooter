@@ -15,7 +15,22 @@ namespace JacobZombieShooter
         public boss(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(postions, image, color, speed, shoots)
         {
             oranginalPosition = postions;
+            Speed += new Vector2(1, 1);
+          
         }
+        public override void update(Player player, GameTime gameTime)
+        {
+            for (int i = 0; i > BadBullets.Count; i++)
+            {
+                if (!BadBullets[i].CanSlowDown)
+                {
+                    BadBullets[i].CanSpeedUp = true;
+                }
+            }
+
+            base.update(player, gameTime);
+        }
+
         public void respawn()
         {
             bossLives = 50;

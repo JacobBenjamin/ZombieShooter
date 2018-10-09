@@ -19,7 +19,7 @@ namespace JacobZombieShooter
         float length = 1.5f;
 
         public bool CanSlowDown = false;
-
+        public bool CanSpeedUp = false;
         public float fast = 0.5f;
         public override Rectangle hitbox
         {
@@ -43,6 +43,10 @@ namespace JacobZombieShooter
             if (CanSlowDown == true)
             {
                 Position += speed / 2;
+            }
+            else if(CanSpeedUp == true)
+            {
+                Position += speed * 2;
             }
             //if (speed.X < 0)
             //{

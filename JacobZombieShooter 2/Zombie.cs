@@ -50,7 +50,7 @@ namespace JacobZombieShooter
             timeToShoot = TimeSpan.FromMilliseconds(shoots);
         }
 
-        public void update(Player player, GameTime gameTime)
+        public virtual void update(Player player, GameTime gameTime)
         {
 
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
