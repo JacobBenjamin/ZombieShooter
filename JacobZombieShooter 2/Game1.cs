@@ -10,12 +10,7 @@ using System.Diagnostics;
 namespace JacobZombieShooter
 {
 
-    //sprite ☺
-    //player ☺
-    //wasd movement ☻
-    //zombie☻
-    //bullet☺
-
+    //Make it so that if you leave aroom in the middle of a battle, enemies follow you into the next room.
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -88,7 +83,7 @@ namespace JacobZombieShooter
         Texture2D healthimage;
         Texture2D battleGround;
         bool battle = false;
-        float lives = 5;
+        float lives = 10;
         Vector2 origin;
         Sprite background;
         bool shooting = false;
@@ -152,7 +147,7 @@ namespace JacobZombieShooter
             Bullet.EvilTexture = Content.Load<Texture2D>("noodle");
             battleGround = Content.Load<Texture2D>("beez");
             ammoImage = Content.Load<Texture2D>("nuggetBox");
-            buttonPlace = new Vector2(1000, 100);
+            buttonPlace = new Vector2(GraphicsDevice.Viewport.Width,0);
             healthimage = Content.Load<Texture2D>("amazing3D");
             Song jazzLoop = Content.Load<Song>("jazzloop");
             sword = Content.Load<Texture2D>("blade");
@@ -402,8 +397,8 @@ namespace JacobZombieShooter
             {
 
                 Zombies.Clear();
-                healthCrates.Clear();
-                ammoCases.Clear();
+             //   healthCrates.Clear();
+                //ammoCases.Clear();
                 boss.BadBullets.Clear();
 
                 battle = false;
@@ -434,8 +429,8 @@ namespace JacobZombieShooter
                     {
                         lives--;
 
-                        hero.Color.R -= 50;
-                        hero.Color.B -= 50;
+                        hero.Color.R -= 25;
+                        hero.Color.B -= 25;
                     }
                     continue;
 
@@ -454,6 +449,7 @@ namespace JacobZombieShooter
             if (hero.gameOver)
             {
                 freeze = true;
+                lives = 10;
                 Restart(ks);
                 //hero.gameOver = false;
 
@@ -528,8 +524,8 @@ namespace JacobZombieShooter
                     {
                         lives--;
 
-                        hero.Color.R -= 50;
-                        hero.Color.B -= 50;
+                        hero.Color.R -= 25;
+                        hero.Color.B -= 25;
                     }
                     break;
                 }
@@ -631,7 +627,7 @@ namespace JacobZombieShooter
                                     if (!meelee)
 
                                     {
-                                        lives -= .5f;
+                                        lives -= 1;
 
                                         hero.Color.R -= 25;
                                         hero.Color.B -= 25;
@@ -731,23 +727,16 @@ namespace JacobZombieShooter
                         healthCrates.RemoveAt(x);
                     }
                 }
-                if (healing == true && lives < 5)
+                if (healing == true && lives < 10)
                 {
                     lives += 1;
-                    hero.Color.R += 50;
-                    hero.Color.B += 50;
-
-                    healing = false;
-
-                }
-                else if (healing == true && lives == 4.75f)
-                {
-                    lives += .25f;
                     hero.Color.R += 25;
                     hero.Color.B += 25;
 
                     healing = false;
+
                 }
+             
              
                
                 else if(!meelee)
@@ -858,7 +847,7 @@ namespace JacobZombieShooter
             }
             // hero.DrawHitBox(spriteBatch,GraphicsDevice);
 
-            //spriteBatch.DrawString(font, "yeet", buttonPlace, Color.Black);
+            spriteBatch.DrawString(font, lives.ToString(), new Vector2(buttonPlace.X - font.MeasureString(lives.ToString()).X,0), Color.White);
             for (int a = 0; a < healthCrates.Count; a++)
             {
                 healthCrates[a].Draw(spriteBatch);
@@ -916,7 +905,7 @@ namespace JacobZombieShooter
 
             hack = false;
             kills = 0;
-            lives = 5;
+            
             boss.Position = new Vector2(-100, 100);
             //ammo = 50;
             boss.bossLives = 50;
@@ -936,8 +925,7 @@ namespace JacobZombieShooter
 
             boss.BadBullets.Clear();
             speshal = false;
-            hero.Color.R = 255;
-            hero.Color.B = 255;
+         
             ded = kills.ToString();
             spookSpeed = .3f;
             shootSpeed = 100f;
