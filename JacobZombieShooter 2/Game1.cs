@@ -91,7 +91,8 @@ namespace JacobZombieShooter
         float rotation;
         TimeSpan elapsedShootTime;
         TimeSpan timeToShoot;
-
+        bool lastbattleWon = false;
+        bool ditch = false;
         bool spookIncrease;
         Texture2D tankImage;
         bool battleFinished = false;
@@ -325,7 +326,10 @@ namespace JacobZombieShooter
                 {
                     Zombies.Add(new Zombie(Labs[i].Position, Zomb, color, speed, 2000));
                 }
-
+                if(ditch)
+                {
+                    Zombies.Add(new Zombie(Vector2.Zero, Zomb, color, speed, 2000));
+                }
 
                 //Zombies.Add(new Zombie(new Vector2(0, 300), Zomb, color, speed));
                 //Zombies.Add(new Zombie(new Vector2(GraphicsDevice.Viewport.Width - Zomb.Width, 300), Zomb, color, speed));
@@ -400,12 +404,31 @@ namespace JacobZombieShooter
              //   healthCrates.Clear();
                 //ammoCases.Clear();
                 boss.BadBullets.Clear();
-
-                battle = false;
                 
+                battle = false;
+                lastbattleWon = true;
                 respawnable = true;
 
             }
+
+
+
+            if (!battleFinished)
+            {
+                if (lastbattleWon)
+                {
+                    ditch = false;
+                    lastbattleWon = false;
+                }
+                else
+                {
+                    ditch = true;
+                }
+            }
+            //else
+            //{
+            //    ditch = true;
+            //}
             if (respawnable)
             {
 
@@ -450,6 +473,9 @@ namespace JacobZombieShooter
             {
                 freeze = true;
                 lives = 10;
+                hero.Color.R = 255;
+                hero.Color.B = 255;
+
                 Restart(ks);
                 //hero.gameOver = false;
 
@@ -474,12 +500,17 @@ namespace JacobZombieShooter
             {
                 Zombies[i].Speed = speed = new Vector2(spookSpeed, spookSpeed);
                 bool breaking = false;
-                if (freeze == false)
+                if (!freeze && !ditch)
                 {
                     Zombies[i].Muve();
 
 
                 }
+                else if(ditch)
+                {
+                    Zombies[i].otherMuve(hero);
+                }
+
                 if (Zombies[i].Position.X > GraphicsDevice.Viewport.Width)
                 {
                     Zombies.RemoveAt(i);
@@ -681,28 +712,31 @@ namespace JacobZombieShooter
 
                 //}
             }
-            if (hero.Position.X < 0 && battleFinished)
-            {
-                hero.Position.X = GraphicsDevice.Viewport.Width;
-                Restart(ks);
-            }
-            else if (hero.Position.X > GraphicsDevice.Viewport.Width && battleFinished)
-            {
-                hero.Position.X = 0;
-                Restart(ks);
 
-            }
-            else if (hero.Position.Y < 0 && battleFinished)
-            {
-                hero.Position.Y = GraphicsDevice.Viewport.Height;
-                Restart(ks);
-            }
-            else if (hero.Position.Y > GraphicsDevice.Viewport.Height && battleFinished)
-            {
-                hero.Position.Y = 0;
-                Restart(ks);
+                if (hero.Position.X < 0)
+                {
+                    hero.Position.X = GraphicsDevice.Viewport.Width;
+                    Restart(ks);
+                }
+                else if (hero.Position.X > GraphicsDevice.Viewport.Width)
+                {
+                    hero.Position.X = 0;
+                    Restart(ks);
 
-            }
+                }
+                else if (hero.Position.Y < 0)
+                {
+                    hero.Position.Y = GraphicsDevice.Viewport.Height;
+                    Restart(ks);
+                }
+                else if (hero.Position.Y > GraphicsDevice.Viewport.Height)
+                {
+                    hero.Position.Y = 0;
+                    Restart(ks);
+
+                }
+            
+            
             for (int x = 0; x < ammoCases.Count; x++)
                 {
                     if (hero.hitbox.Intersects(ammoCases[x].hitbox))
