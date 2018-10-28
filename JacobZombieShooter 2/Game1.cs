@@ -22,6 +22,7 @@ namespace JacobZombieShooter
         bool speshal = false;
         bool freeze = false;
         bool respawining = false;
+        bool done = false;
         Vector2 position;
         Texture2D flyguy;
         bool hack = true;
@@ -91,7 +92,7 @@ namespace JacobZombieShooter
         float rotation;
         TimeSpan elapsedShootTime;
         TimeSpan timeToShoot;
-        bool lastbattleWon = false;
+        bool lastbattleWon = true;
         bool ditch = false;
         bool spookIncrease;
         Texture2D tankImage;
@@ -406,25 +407,24 @@ namespace JacobZombieShooter
                 boss.BadBullets.Clear();
                 
                 battle = false;
-                lastbattleWon = true;
+            //    lastbattleWon = true;
                 respawnable = true;
-
+                
             }
 
 
 
-            if (!battleFinished)
-            {
-                if (lastbattleWon)
-                {
-                    ditch = false;
-                    lastbattleWon = false;
-                }
-                else
-                {
-                    ditch = true;
-                }
-            }
+                //if (lastbattleWon)
+                //{
+                //    ditch = false;
+                //   // lastbattleWon = false;
+                //}
+                //else if(!lastbattleWon&& !battleFinished)
+                //{
+                //    ditch = true;
+                   
+                //}
+            
             //else
             //{
             //    ditch = true;
@@ -506,7 +506,7 @@ namespace JacobZombieShooter
 
 
                 }
-                else if(ditch)
+                else if(!freeze && ditch)
                 {
                     Zombies[i].otherMuve(hero);
                 }
@@ -716,27 +716,43 @@ namespace JacobZombieShooter
                 if (hero.Position.X < 0)
                 {
                     hero.Position.X = GraphicsDevice.Viewport.Width;
-                    Restart(ks);
-                }
+                   
+                done = true;
+                Restart(ks);
+            }
                 else if (hero.Position.X > GraphicsDevice.Viewport.Width)
                 {
                     hero.Position.X = 0;
-                    Restart(ks);
-
-                }
+                  
+                done = true;
+                Restart(ks);
+            }
                 else if (hero.Position.Y < 0)
                 {
                     hero.Position.Y = GraphicsDevice.Viewport.Height;
-                    Restart(ks);
-                }
+                  
+                done = true;
+                Restart(ks);
+            }
                 else if (hero.Position.Y > GraphicsDevice.Viewport.Height)
                 {
                     hero.Position.Y = 0;
-                    Restart(ks);
-
+                  
+                done = true;
+                Restart(ks);
+            }
+            
+            if(done)
+            {
+                if(battleFinished)
+                {
+                  ditch = false;
                 }
-            
-            
+                else
+                {
+                    ditch = true;
+                }
+            }
             for (int x = 0; x < ammoCases.Count; x++)
                 {
                     if (hero.hitbox.Intersects(ammoCases[x].hitbox))
