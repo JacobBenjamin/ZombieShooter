@@ -70,8 +70,11 @@ namespace JacobZombieShooter
         Texture2D sword;
         Vector2 Position;
         Texture2D Zomb;
+        Texture2D Meanie;
+
         Player hero;
         List<Zombie> Zombies = new List<Zombie>();
+        List<Angery> Angeries = new List<Angery>();
         TimeSpan lastTank;
         List<Bullet> Bullets = new List<Bullet>();
         bool respawnable = false;
@@ -155,6 +158,7 @@ namespace JacobZombieShooter
             ammoImage = Content.Load<Texture2D>("nuggetBox");
             buttonPlace = new Vector2(GraphicsDevice.Viewport.Width, 0);
             healthimage = Content.Load<Texture2D>("amazing3D");
+            Meanie = Content.Load<Texture2D>("BigBoy");
             Song jazzLoop = Content.Load<Song>("jazzloop");
             sword = Content.Load<Texture2D>("blade");
             BPostion = position;
@@ -177,6 +181,7 @@ namespace JacobZombieShooter
             yes = new Sprite(yesImage, new Vector2(200, 200), Color.Green, 2, 2);
             no = new Sprite(noImage, new Vector2(700, 300), Color.Green, 1, 1);
             Zombie zombie = new Zombie(Position, Zomb, color, speed, 2000);
+            Angery Angeries = new Angery(Position, Zomb, color, 2 * speed, 2000);
             boss = new boss(new Vector2(-100, 100), bossBoi, color, speed, 1000);
 
             //for (int i = 0; i < 3; i++)
@@ -359,7 +364,15 @@ namespace JacobZombieShooter
             {
                 for (int i = 0; i < Labs.Count; i++)
                 {
-                    Zombies.Add(new Zombie(Labs[i].Position, Zomb, color, speed, 2000));
+
+                    if (randy.Next(0, 2) == 0)
+                    {
+                        Zombies.Add(new Zombie(Labs[i].Position, Zomb, color, speed, 2000));
+                    }
+                    else
+                    {
+                        Angeries.Add(new Angery(Labs[i].Position, Meanie, color, 2 * speed, 2000));
+                    }
                 }
                 if (ditch)
                 {
@@ -436,6 +449,7 @@ namespace JacobZombieShooter
             {
 
                 Zombies.Clear();
+                Angeries.Clear();
                 //   healthCrates.Clear();
                 //ammoCases.Clear();
                 boss.BadBullets.Clear();
@@ -600,6 +614,7 @@ namespace JacobZombieShooter
                 {
                     if (Zombies.Count > 0)
                     {
+
                         if (Bullets[a].hitbox.Intersects(Zombies[i].hitbox))
                         {
 
@@ -679,7 +694,7 @@ namespace JacobZombieShooter
                     if (hero.gameOver == false && !freeze)
                     {
                         Zombies[i].update(hero, gameTime);
-
+                        Zombies[i].shoot(hero, gameTime);
 
                         if (Zombies[i].BadBullets.Count > 0)
                         {
@@ -746,6 +761,56 @@ namespace JacobZombieShooter
 
                 //}
             }
+            for (int i = 0; i < Angeries.Count; i++)
+            {
+                if (!freeze && hero.gameOver == false)
+                {
+                    Angeries[i].update(hero, gameTime);
+                    Angeries[i].otherMuve(hero);
+                    if (hero.hitbox.Intersects(Angeries[i].hitbox))
+                    {
+                        Angeries.RemoveAt(i);
+                        if (i > 0)
+                        {
+                            i--;
+                        }
+
+                        if (!meelee)
+                        {
+                            lives--;
+
+                            hero.Color.R -= 25;
+                            hero.Color.B -= 25;
+                        }
+                        break;
+                    }
+                    for (int a = 0; a < Bullets.Count; a++)
+
+                    {
+                        if (Angeries.Count > 0)
+                        {
+
+                            if (Bullets[a].hitbox.Intersects(Angeries[i].hitbox))
+                            {
+
+                                //breaking = true;
+                                deathPlace.X = Angeries[i].Position.X;
+                                deathPlace.Y = Angeries[i].Position.Y;
+                                Angeries.RemoveAt(i);
+                                if (i > 0)
+                                {
+                                    i--;
+                                }
+                                Bullets.RemoveAt(a);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+
 
             if (hero.Position.X < 0)
             {
@@ -887,6 +952,7 @@ namespace JacobZombieShooter
                     //    Bullets[i].Position.Y = 0;
 
                     //}
+
                 }
 
                 //
@@ -895,7 +961,10 @@ namespace JacobZombieShooter
             // TODO: Add your update logic here
             //pastGameTime = gameTime;
             base.Update(gameTime);
+
         }
+
+
 
 
 
@@ -960,6 +1029,10 @@ namespace JacobZombieShooter
             {
                 Labs[i].Draw(spriteBatch);
                 // Labs[i].DrawHitBox(spriteBatch,GraphicsDevice);
+            }
+            for (int i = 0; i < Angeries.Count; i++)
+            {
+                Angeries[i].Draw(spriteBatch);
             }
             for (int i = 0; i < Bullets.Count; i++)
             {

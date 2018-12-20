@@ -14,7 +14,8 @@ namespace JacobZombieShooter
         bool shooting = false;
         public bool badShooting = false;
         public bool slow;
-        
+          float deltaX;
+            float deltaY;
         Vector2 normal;
         float originalSpeedMagnitude;
         int Shoots;
@@ -49,14 +50,18 @@ namespace JacobZombieShooter
             //bulletImage = Content.Load<Texture2D>("noodle");
             timeToShoot = TimeSpan.FromMilliseconds(shoots);
         }
-
         public virtual void update(Player player, GameTime gameTime)
         {
 
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
-            float deltaX;
-            float deltaY;
+            deltaY = Position.Y - player.Position.Y;
             deltaX = Position.X - player.Position.X;
+            Rotation = (float)Math.Atan2(-deltaX, deltaY);
+        }
+        public virtual void shoot(Player player, GameTime gameTime)
+        {
+
+           
             if (!badShooting)
             {
                 
@@ -83,8 +88,8 @@ namespace JacobZombieShooter
             {
                 BadBullets[i].update();
             }
-                deltaY = Position.Y - player.Position.Y;
-            Rotation = (float)Math.Atan2(-deltaX, deltaY);
+           
+        
 
             //when the player is shooting make timeToShoot smaller
             elapsedShootTime += gameTime.ElapsedGameTime;
