@@ -30,7 +30,7 @@ namespace JacobZombieShooter
             Rotation = 100;
             speed = Speed;
             Origin = new Vector2(image.Width / 2f, image.Height / 2f);
-            originalSpeedMagnitude = speed.Length();
+            originalSpeedMagnitude = speed.Length() * 3;
         }
 
         public void Update(KeyboardState ks, MouseState Ms, GamePadState gs)

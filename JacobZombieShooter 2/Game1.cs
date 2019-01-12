@@ -55,7 +55,7 @@ namespace JacobZombieShooter
         TimeSpan elapsedMeeleeTime;
         Vector2 BPostion;
         Vector2 PositionB;
-        boss boss;
+        Boss boss;
         Vector2 deathPlace;
         Rectangle buttonA;
         Vector2 buttonPlace;
@@ -181,8 +181,8 @@ namespace JacobZombieShooter
             yes = new Sprite(yesImage, new Vector2(200, 200), Color.Green, 2, 2);
             no = new Sprite(noImage, new Vector2(700, 300), Color.Green, 1, 1);
             Zombie zombie = new Zombie(Position, Zomb, color, speed, 2000);
-            Angery Angeries = new Angery(Position, Zomb, color, 2 * speed, 2000);
-            boss = new boss(new Vector2(-100, 100), bossBoi, color, speed, 1000);
+            Angery Angeries = new Angery(Position, Zomb, color, new Vector2(100,100), 2000);
+            boss = new Boss(new Vector2(-100, 100), bossBoi, color, speed, 1000);
 
             //for (int i = 0; i < 3; i++)
             //{
@@ -236,6 +236,10 @@ namespace JacobZombieShooter
                 {
                     Bullets[i].CanSlowDown = true;
                 }
+                for(int i = 0; i<Angeries.Count;i++)
+                {
+                    Angeries[i].canSlowDown = true;
+                }
                 for (int i = 0; i < Zombies.Count; i++)
                 {
                     Zombies[i].badShooting = false;
@@ -253,6 +257,10 @@ namespace JacobZombieShooter
                 for (int i = 0; i < Bullets.Count; i++)
                 {
                     Bullets[i].CanSlowDown = false;
+                }
+                for (int i = 0; i < Angeries.Count; i++)
+                {
+                    Angeries[i].canSlowDown = false;
                 }
                 for (int i = 0; i < Zombies.Count; i++)
                 {
@@ -347,6 +355,7 @@ namespace JacobZombieShooter
             if (hero.gameOver == false && battle == true && !freeze && !hack)
             {
                 boss.update(hero, gameTime);
+                boss.shoot(hero, gameTime);
                 boss.otherMuve(hero);
                 for (int i = 0; i < boss.BadBullets.Count; i++)
                 {
@@ -371,7 +380,7 @@ namespace JacobZombieShooter
                     }
                     else
                     {
-                        Angeries.Add(new Angery(Labs[i].Position, Meanie, color, 2 * speed, 2000));
+                        Angeries.Add(new Angery(Labs[i].Position, Meanie, color, 8* speed, 2000));
                     }
                 }
                 if (ditch)
@@ -973,6 +982,7 @@ namespace JacobZombieShooter
 
 
 
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -1069,6 +1079,7 @@ namespace JacobZombieShooter
             //ammo = 50;
             boss.bossLives = 50;
             Zombies.Clear();
+            Angeries.Clear();
             healthCrates.Clear();
             ammoCases.Clear();
             Bullets.Clear();

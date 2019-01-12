@@ -10,12 +10,14 @@ namespace JacobZombieShooter
 {
     class Zombie : Sprite
     {
-        public Vector2 Speed;
+        public virtual Vector2 Speed { get; set; }
         bool shooting = false;
         public bool badShooting = false;
         public bool slow;
           float deltaX;
+       public bool canSlowDown =false;
             float deltaY;
+       public Vector2 originalSpeed;
         Vector2 normal;
         float originalSpeedMagnitude;
         int Shoots;
@@ -46,6 +48,7 @@ namespace JacobZombieShooter
             direction = randy.Next(1, 5);
             Origin = new Vector2(Image.Width / 2f, Image.Height / 2f);
             originalSpeedMagnitude = speed.Length();
+            originalSpeed = Speed;
             
             //bulletImage = Content.Load<Texture2D>("noodle");
             timeToShoot = TimeSpan.FromMilliseconds(shoots);
@@ -234,7 +237,14 @@ namespace JacobZombieShooter
         }
         public void otherMuve(Player player)
         {
-
+            if(canSlowDown)
+            {
+                Speed = originalSpeed/2;
+            }
+            else
+            {
+                Speed = originalSpeed;
+            }
             if (Position.X > player.Position.X)
             {
                 Position.X -= Speed.X;

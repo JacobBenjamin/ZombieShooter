@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace JacobZombieShooter
 {
-    class boss : Zombie
+    class Boss : Zombie
     {
         Vector2 oranginalPosition;
         public int bossLives = 20;
-        public boss(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(postions, image, color, speed, shoots)
+        public Boss(Vector2 postions, Texture2D image, Color color, Vector2 speed, int shoots) : base(postions, image, color, speed, shoots)
         {
             oranginalPosition = postions;
             Speed += new Vector2(1, 1);

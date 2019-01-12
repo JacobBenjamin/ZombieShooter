@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="AmmoCase.cs" />
     <Compile Include="Angery.cs" />
-    <Compile Include="boss.cs" />
+    <Compile Include="Boss.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="HealthCrate.cs" />

@@ -32,7 +32,7 @@ namespace JacobZombieShooter
              : base((evil ? EvilTexture : Texture), position, color, 1.5f, 1.5f)
         {
             Origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
-            speed = speedScale * ZombieShooterHelper.CalculateNewSpeed(magnitude, rotation);
+            speed = speedScale * ZombieShooterHelper.CalculateNewSpeed(magnitude, rotation)*1.5f;
             //this.turn = turn;
             Rotation = rotation;
             this.length = length;
